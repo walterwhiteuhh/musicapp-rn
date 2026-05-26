@@ -1,10 +1,16 @@
-import { electronicRecommendationFixtures } from '@/data/recommendations/fixtures';
 import { soundCloudTrackFixtures } from '@/data/music/fixtures';
+import { electronicRecommendationFixtures } from '@/data/recommendations/fixtures';
 
-describe('SoundCloud fixture links', () => {
-  it('uses valid SoundCloud URLs for recommendation previews', () => {
+describe('fixture source links', () => {
+  it('uses valid source URLs for recommendation previews', () => {
     for (const track of electronicRecommendationFixtures) {
-      expect(track.externalUrl).toMatch(/^https:\/\/(m\.)?soundcloud\.com\/.+/);
+      expect(track.externalUrl).toMatch(/^https:\/\/(www\.youtube\.com|m\.soundcloud\.com|soundcloud\.com)\/.+/);
+
+      for (const sourceLink of track.sourceLinks ?? []) {
+        expect(sourceLink.url).toMatch(
+          /^https:\/\/(www\.youtube\.com|m\.soundcloud\.com|soundcloud\.com|en\.wikipedia\.org)\/.+/,
+        );
+      }
     }
   });
 

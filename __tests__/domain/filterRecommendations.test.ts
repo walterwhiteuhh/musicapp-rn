@@ -14,13 +14,13 @@ const baseProfile: TasteProfile = {
     space: 85,
     rhythm: 35,
   },
-  suggestedArtists: ['Ben Böhmer', 'NTO'],
-  selectedArtists: ['Ben Böhmer'],
+  suggestedArtists: ['Ben Boehmer', 'NTO'],
+  selectedArtists: ['Ben Boehmer'],
   lineageWeights: {
     'melodic / progressive': 1,
   },
   artistAnchorWeights: {
-    'Ben Böhmer': 1,
+    'Ben Boehmer': 1,
   },
   discoveryDepth: createInitialDiscoveryDepth(0),
   calibration: {
@@ -37,7 +37,7 @@ describe('filterRecommendations', () => {
   it('scores tracks by completed profile genre, context, and dimensions', () => {
     expect(filterRecommendations(electronicRecommendationFixtures, baseProfile)[0]).toEqual(
       expect.objectContaining({
-        title: 'Beyond Beliefs',
+        title: 'Live above Cappadocia',
       }),
     );
   });
@@ -62,6 +62,18 @@ describe('filterRecommendations', () => {
         artistName: 'Paul Kalkbrenner',
       }),
     );
+  });
+
+  it('keeps source-rich festival and live-set metadata on recommendations', () => {
+    const [firstTrack] = filterRecommendations(electronicRecommendationFixtures, baseProfile);
+
+    expect(firstTrack.sourceLinks?.[0]).toEqual(
+      expect.objectContaining({
+        kind: 'live-set',
+        context: 'Cercle / Cappadocia',
+      }),
+    );
+    expect(firstTrack.culturalContext).toContain('Long-form melodic live performance');
   });
 
   it('falls back to all tracks when there is no useful match', () => {

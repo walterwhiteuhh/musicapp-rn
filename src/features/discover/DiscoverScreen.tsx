@@ -126,13 +126,21 @@ function FeaturedPreview({
           <Text numberOfLines={1} style={styles.featuredArtist}>
             {track.artistName}
           </Text>
-          <Text style={styles.previewUnavailable}>Playback arrives later. Discovery data is active.</Text>
+          <Text style={styles.previewUnavailable}>
+            Playback arrives later. Source context is already part of the profile.
+          </Text>
         </View>
       </View>
       <View style={styles.matchStrip}>
         <Text style={styles.matchText}>{track.genre}</Text>
         <Text style={styles.matchDivider}>/</Text>
         <Text style={styles.matchText}>{track.contexts.join(' + ')}</Text>
+        {track.sourceLinks?.[0]?.context ? (
+          <>
+            <Text style={styles.matchDivider}>/</Text>
+            <Text style={styles.matchText}>{track.sourceLinks[0].context}</Text>
+          </>
+        ) : null}
       </View>
       <Pressable accessibilityRole="button" style={styles.moreLikeButton} onPress={onMoreLikeThis}>
         <Text style={styles.moreLikeButtonText}>
@@ -143,6 +151,12 @@ function FeaturedPreview({
         <Text style={styles.reasonLabel}>Why this leads</Text>
         <Text style={styles.reasonText}>{track.reason}</Text>
       </View>
+      {track.culturalContext ? (
+        <View style={styles.contextBox}>
+          <Text style={styles.contextLabel}>Reference layer</Text>
+          <Text style={styles.contextText}>{track.culturalContext}</Text>
+        </View>
+      ) : null}
       <SourceLink track={track} />
     </View>
   );
@@ -162,7 +176,7 @@ function RecommendationCard({ track }: { track: RecommendationTrack }) {
           <View style={[styles.signalBar, { height: 24 }]} />
         </View>
         <Text numberOfLines={1} style={styles.artworkCaption}>
-          SoundCloud preview / {track.contexts.join(' / ')}
+          {formatSourceKind(track.sourceLinks?.[0]?.kind)} / {track.contexts.join(' / ')}
         </Text>
       </View>
       <View style={styles.cardBody}>
@@ -194,6 +208,12 @@ function RecommendationCard({ track }: { track: RecommendationTrack }) {
           <Text style={styles.reasonLabel}>Why recommended</Text>
           <Text style={styles.reasonText}>{track.reason}</Text>
         </View>
+        {track.culturalContext ? (
+          <View style={styles.contextBox}>
+            <Text style={styles.contextLabel}>Reference layer</Text>
+            <Text style={styles.contextText}>{track.culturalContext}</Text>
+          </View>
+        ) : null}
         <SourceLink track={track} compact />
       </View>
     </View>
@@ -201,15 +221,18 @@ function RecommendationCard({ track }: { track: RecommendationTrack }) {
 }
 
 function SourceLink({ track, compact = false }: { track: RecommendationTrack; compact?: boolean }) {
+  const primarySource = track.sourceLinks?.[0] ?? null;
+  const linkUrl = primarySource?.url ?? track.externalUrl;
+
   const openSource = async () => {
-    if (!track.externalUrl) {
+    if (!linkUrl) {
       return;
     }
 
-    await Linking.openURL(track.externalUrl).catch(() => undefined);
+    await Linking.openURL(linkUrl).catch(() => undefined);
   };
 
-  if (!track.externalUrl) {
+  if (!linkUrl) {
     return null;
   }
 
@@ -219,10 +242,34 @@ function SourceLink({ track, compact = false }: { track: RecommendationTrack; co
       style={[styles.sourceLink, compact && styles.sourceLinkCompact]}
       onPress={openSource}
     >
-      <Text style={styles.sourceLabel}>Source</Text>
-      <Text style={styles.sourceText}>Open source on SoundCloud</Text>
+      <Text style={styles.sourceLabel}>{formatProvider(primarySource?.provider ?? track.source)}</Text>
+      <Text style={styles.sourceText}>Open {primarySource?.label ?? 'source'}</Text>
+      {primarySource?.context ? <Text style={styles.sourceContext}>{primarySource.context}</Text> : null}
     </Pressable>
   );
+}
+
+function formatProvider(provider: string) {
+  if (provider === 'youtube') {
+    return 'YouTube source';
+  }
+
+  if (provider === 'editorial') {
+    return 'Reference source';
+  }
+
+  return 'SoundCloud source';
+}
+
+function formatSourceKind(kind?: string) {
+  if (!kind) {
+    return 'Source';
+  }
+
+  return kind
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
 }
 
 function DimensionBar({ label, value }: { label: string; value: number }) {
@@ -533,6 +580,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
+  contextBox: {
+    backgroundColor: '#080D13',
+    borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 4,
+    padding: 10,
+  },
+  contextLabel: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  contextText: {
+    color: colors.muted,
+    fontSize: 13,
+    lineHeight: 19,
+  },
   matchStrip: {
     alignItems: 'center',
     backgroundColor: '#071018',
@@ -589,5 +655,11 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 13,
     fontWeight: '800',
+  },
+  sourceContext: {
+    color: colors.muted,
+    fontSize: 12,
+    fontWeight: '700',
+    lineHeight: 17,
   },
 });

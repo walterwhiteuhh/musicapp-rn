@@ -26,17 +26,18 @@ describe('DiscoverScreen', () => {
   it('renders demo recommendations without a completed profile', async () => {
     render(<DiscoverScreen />);
 
-    expect(await screen.findByText('Red In The Desert')).toBeTruthy();
+    expect(await screen.findByText('Grand Palais for Cercle')).toBeTruthy();
     expect(screen.getByText('Featured from your Klangprofil')).toBeTruthy();
     expect(screen.getByText('Create taste profile')).toBeTruthy();
-    expect(screen.getAllByText('Open source on SoundCloud').length).toBeGreaterThan(0);
+    expect(screen.getByText('Open YouTube live set')).toBeTruthy();
+    expect(screen.getAllByText('Reference layer').length).toBeGreaterThan(0);
   });
 
-  it('opens recommendation links on SoundCloud', async () => {
+  it('opens recommendation source links', async () => {
     render(<DiscoverScreen />);
-    fireEvent.press((await screen.findAllByText('Open source on SoundCloud'))[0]);
+    fireEvent.press(await screen.findByText('Open YouTube live set'));
 
-    expect(Linking.openURL).toHaveBeenCalledWith('https://soundcloud.com/boris-brejcha');
+    expect(Linking.openURL).toHaveBeenCalledWith('https://www.youtube.com/watch?v=vqz8c4ZP3Wg');
   });
 
   it('uses more like this to focus the next signals list', async () => {
@@ -62,8 +63,8 @@ describe('DiscoverScreen', () => {
           space: 85,
           rhythm: 35,
         },
-        suggestedArtists: ['Ben Böhmer', 'NTO'],
-        selectedArtists: ['Ben Böhmer'],
+        suggestedArtists: ['Ben Boehmer', 'NTO'],
+        selectedArtists: ['Ben Boehmer'],
         calibration: {
           onboardingWeight: 1,
           behaviorWeight: 0,
@@ -77,6 +78,6 @@ describe('DiscoverScreen', () => {
 
     render(<DiscoverScreen />);
 
-    expect(await screen.findByText('Beyond Beliefs')).toBeTruthy();
+    expect(await screen.findByText('Live above Cappadocia')).toBeTruthy();
   });
 });
