@@ -98,6 +98,7 @@ export function mapSoundCloudTrack(rawTrack: unknown): Track | null {
     artworkUrl: typeof rawTrack.artwork_url === 'string' ? rawTrack.artwork_url : null,
     durationMs: typeof duration === 'number' ? duration : 0,
     source: 'soundcloud',
+    externalUrl: typeof rawTrack.permalink_url === 'string' ? rawTrack.permalink_url : undefined,
   };
 }
 

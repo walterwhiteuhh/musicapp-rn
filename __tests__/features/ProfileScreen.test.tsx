@@ -39,16 +39,26 @@ describe('ProfileScreen', () => {
     await AsyncStorage.clear();
   });
 
-  it('shows local profile data while loading AI tags', async () => {
+  it('shows local profile data while AI tags resolve separately', async () => {
     await AsyncStorage.setItem(tasteProfileStorageKey, JSON.stringify(storedProfile));
     const provider: ProfileTagsProvider = {
-      generateTags: jest.fn(() => new Promise(() => undefined)),
+      generateTags: jest.fn(() =>
+        Promise.resolve({
+          schemaVersion: 1,
+          primaryEnergy: 'high',
+          rhythmBias: 'Driving four-to-the-floor',
+          listeningIntent: 'Club discovery',
+          discoveryVector: ['hypnotic'],
+          profileNotes: ['Loading state passed through'],
+          confidence: 0.72,
+        }),
+      ),
     };
 
     render(<ProfileScreen profileTagsProvider={provider} />);
 
     expect(await screen.findByText('Techno, Ambient')).toBeTruthy();
-    expect(await screen.findByText('Analysing profile tags...')).toBeTruthy();
+    expect(await screen.findByText('Driving four-to-the-floor')).toBeTruthy();
   });
 
   it('renders generated AI profile tags', async () => {

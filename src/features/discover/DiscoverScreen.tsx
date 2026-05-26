@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Linking, Platform, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ActionButton } from '@/components/ActionButton';
@@ -15,7 +15,9 @@ const repository = new AsyncStorageTasteProfileRepository();
 
 export function DiscoverScreen() {
   const router = useRouter();
+  const { width } = useWindowDimensions();
   const [profile, setProfile] = useState<TasteProfile | null>(null);
+  const useGrid = Platform.OS === 'web' && width >= 780;
 
   useEffect(() => {
     void repository.getProfile().then(setProfile);
@@ -28,14 +30,15 @@ export function DiscoverScreen() {
   return (
     <ScreenContainer>
       <FlatList
+        key={useGrid ? 'grid' : 'list'}
         ListHeaderComponent={
           <View style={styles.header}>
             <Text style={styles.eyebrow}>Klangfeld</Text>
-            <Text style={styles.title}>Discover electronic tracks with reasons.</Text>
+            <Text style={styles.title}>Curated signals for electronic discovery.</Text>
             <Text style={styles.subtitle}>
               {profile?.completedAt
-                ? 'Your profile is shaping this local demo feed.'
-                : 'Demo mode is active. Create a taste profile to shape the feed.'}
+                ? 'Your Klangprofil shapes this preview feed before the player and SoundCloud proxy arrive.'
+                : 'Demo mode is active: real SoundCloud links, local matching, no embedded player yet.'}
             </Text>
             {!profile?.completedAt && (
               <ActionButton onPress={() => router.push('/onboarding/welcome' as never)}>
@@ -44,9 +47,11 @@ export function DiscoverScreen() {
             )}
           </View>
         }
+        columnWrapperStyle={useGrid ? styles.columnWrapper : undefined}
         contentContainerStyle={styles.list}
         data={recommendations}
         keyExtractor={(item) => item.id}
+        numColumns={useGrid ? 2 : 1}
         renderItem={({ item }) => <RecommendationCard track={item} />}
       />
     </ScreenContainer>
@@ -54,10 +59,29 @@ export function DiscoverScreen() {
 }
 
 function RecommendationCard({ track }: { track: RecommendationTrack }) {
+  const openSoundCloud = async () => {
+    if (!track.externalUrl) {
+      return;
+    }
+
+    await Linking.openURL(track.externalUrl).catch(() => undefined);
+  };
+
   return (
-    <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}>
+    <View style={styles.card}>
       <View style={styles.artwork}>
-        <Text style={styles.artworkText}>{track.genre.slice(0, 2).toUpperCase()}</Text>
+        <Text style={styles.artworkKicker}>{track.genre}</Text>
+        <View style={styles.signalField}>
+          <View style={[styles.signalBar, { height: 22 }]} />
+          <View style={[styles.signalBar, { height: 42 }]} />
+          <View style={[styles.signalBar, { height: 30 }]} />
+          <View style={[styles.signalBar, { height: 54 }]} />
+          <View style={[styles.signalBar, { height: 36 }]} />
+          <View style={[styles.signalBar, { height: 24 }]} />
+        </View>
+        <Text numberOfLines={1} style={styles.artworkCaption}>
+          SoundCloud preview / {track.contexts.join(' / ')}
+        </Text>
       </View>
       <View style={styles.cardBody}>
         <View style={styles.cardHeader}>
@@ -73,18 +97,40 @@ function RecommendationCard({ track }: { track: RecommendationTrack }) {
         </View>
         <View style={styles.tags}>
           <Text style={styles.tag}>{track.genre}</Text>
-          <Text style={styles.tag}>{track.contexts[0]}</Text>
+          {track.contexts.map((context) => (
+            <Text key={context} style={styles.tagMuted}>
+              {context}
+            </Text>
+          ))}
+        </View>
+        <View style={styles.dimensionStack}>
+          <DimensionBar label="Energy" value={track.dimensions.energy} />
+          <DimensionBar label="Space" value={track.dimensions.space} />
+          <DimensionBar label="Rhythm" value={track.dimensions.rhythm} />
         </View>
         <View style={styles.reasonBox}>
           <Text style={styles.reasonLabel}>Why recommended</Text>
           <Text style={styles.reasonText}>{track.reason}</Text>
-          <Text style={styles.reasonText}>
-            Energy {track.dimensions.energy} / Space {track.dimensions.space} / Rhythm{' '}
-            {track.dimensions.rhythm}
-          </Text>
         </View>
+        {track.externalUrl ? (
+          <Pressable accessibilityRole="link" style={styles.soundCloudButton} onPress={openSoundCloud}>
+            <Text style={styles.soundCloudButtonText}>Open on SoundCloud</Text>
+          </Pressable>
+        ) : null}
       </View>
-    </Pressable>
+    </View>
+  );
+}
+
+function DimensionBar({ label, value }: { label: string; value: number }) {
+  return (
+    <View style={styles.dimensionRow}>
+      <Text style={styles.dimensionLabel}>{label}</Text>
+      <View style={styles.dimensionTrack}>
+        <View style={[styles.dimensionFill, { width: `${Math.max(4, Math.min(100, value))}%` }]} />
+      </View>
+      <Text style={styles.dimensionValue}>{value}</Text>
+    </View>
   );
 }
 
@@ -101,6 +147,9 @@ const styles = StyleSheet.create({
     gap: 14,
     paddingBottom: 28,
     paddingTop: 20,
+  },
+  columnWrapper: {
+    gap: 14,
   },
   header: {
     gap: 12,
@@ -128,21 +177,37 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 8,
     borderWidth: 1,
+    flex: 1,
     overflow: 'hidden',
   },
-  cardPressed: {
-    opacity: 0.82,
-  },
   artwork: {
-    alignItems: 'center',
-    backgroundColor: colors.elevated,
-    height: 170,
-    justifyContent: 'center',
+    backgroundColor: '#071018',
+    gap: 10,
+    minHeight: 118,
+    justifyContent: 'space-between',
+    padding: 16,
   },
-  artworkText: {
-    color: colors.primary,
-    fontSize: 42,
+  artworkKicker: {
+    color: colors.secondary,
+    fontSize: 12,
     fontWeight: '900',
+    textTransform: 'uppercase',
+  },
+  signalField: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    gap: 7,
+    height: 58,
+  },
+  signalBar: {
+    backgroundColor: colors.primary,
+    borderRadius: 999,
+    width: 9,
+  },
+  artworkCaption: {
+    color: colors.muted,
+    fontSize: 13,
+    fontWeight: '700',
   },
   cardBody: {
     gap: 12,
@@ -186,6 +251,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
+  tagMuted: {
+    backgroundColor: '#0D141D',
+    borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    color: colors.muted,
+    fontSize: 12,
+    fontWeight: '800',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  dimensionStack: {
+    gap: 8,
+  },
+  dimensionRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+  },
+  dimensionLabel: {
+    color: colors.muted,
+    fontSize: 12,
+    fontWeight: '800',
+    width: 52,
+  },
+  dimensionTrack: {
+    backgroundColor: '#071018',
+    borderRadius: 999,
+    flex: 1,
+    height: 7,
+    overflow: 'hidden',
+  },
+  dimensionFill: {
+    backgroundColor: colors.primary,
+    borderRadius: 999,
+    height: 7,
+  },
+  dimensionValue: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: '800',
+    textAlign: 'right',
+    width: 28,
+  },
   reasonBox: {
     backgroundColor: '#0D141D',
     borderColor: colors.border,
@@ -204,5 +313,18 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontSize: 14,
     lineHeight: 20,
+  },
+  soundCloudButton: {
+    alignItems: 'center',
+    backgroundColor: '#FF5500',
+    borderRadius: 8,
+    minHeight: 44,
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+  },
+  soundCloudButtonText: {
+    color: '#1B0B00',
+    fontSize: 14,
+    fontWeight: '900',
   },
 });

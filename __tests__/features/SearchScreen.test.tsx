@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { Linking } from 'react-native';
 
 import { SearchScreen } from '@/features/search/SearchScreen';
 import { SearchTracksUseCase } from '@/domain/music/SearchTracksUseCase';
@@ -12,6 +13,7 @@ const track: Track = {
   artworkUrl: null,
   durationMs: 184000,
   source: 'soundcloud',
+  externalUrl: 'https://soundcloud.com/ben-bohmer',
 };
 
 function renderWithProvider(provider: MusicProvider) {
@@ -29,6 +31,14 @@ async function enterQueryAndSearch(query: string) {
 }
 
 describe('SearchScreen', () => {
+  beforeEach(() => {
+    jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('renders the initial search state', () => {
     renderWithProvider({ searchTracks: jest.fn() });
 
@@ -46,6 +56,17 @@ describe('SearchScreen', () => {
     expect(searchTracks).toHaveBeenCalledWith('signal');
     expect(await screen.findByText('Late Night Signal')).toBeTruthy();
     expect(screen.getByText('Mira Vale')).toBeTruthy();
+    expect(screen.getByText('Open on SoundCloud')).toBeTruthy();
+  });
+
+  it('opens linked search results on SoundCloud', async () => {
+    const searchTracks = jest.fn().mockResolvedValue([track]);
+    renderWithProvider({ searchTracks });
+    await enterQueryAndSearch('signal');
+
+    fireEvent.press(await screen.findByText('Open on SoundCloud'));
+
+    expect(Linking.openURL).toHaveBeenCalledWith('https://soundcloud.com/ben-bohmer');
   });
 
   it('renders the loading state while the request is pending', async () => {

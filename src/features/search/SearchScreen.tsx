@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Linking,
   Pressable,
   StyleSheet,
   Text,
@@ -105,6 +106,14 @@ export function SearchScreen({ searchTracksUseCase }: SearchScreenProps) {
 }
 
 function TrackResult({ track }: { track: Track }) {
+  const openSoundCloud = async () => {
+    if (!track.externalUrl) {
+      return;
+    }
+
+    await Linking.openURL(track.externalUrl).catch(() => undefined);
+  };
+
   return (
     <View style={styles.trackRow}>
       <View style={styles.artworkPlaceholder}>
@@ -117,6 +126,11 @@ function TrackResult({ track }: { track: Track }) {
         <Text numberOfLines={1} style={styles.artistName}>
           {track.artistName}
         </Text>
+        {track.externalUrl ? (
+          <Pressable accessibilityRole="link" style={styles.soundCloudLink} onPress={openSoundCloud}>
+            <Text style={styles.soundCloudLinkText}>Open on SoundCloud</Text>
+          </Pressable>
+        ) : null}
       </View>
     </View>
   );
@@ -212,7 +226,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   trackRow: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: 8,
@@ -247,5 +261,18 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontSize: 14,
     marginTop: 4,
+  },
+  soundCloudLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#FF5500',
+    borderRadius: 8,
+    marginTop: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  soundCloudLinkText: {
+    color: '#1B0B00',
+    fontSize: 12,
+    fontWeight: '900',
   },
 });

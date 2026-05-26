@@ -7,4 +7,5 @@ export type Track = {
   artworkUrl: string | null;
   durationMs: number;
   source: MusicSource;
+  externalUrl?: string;
 };

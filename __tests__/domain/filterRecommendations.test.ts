@@ -4,8 +4,8 @@ import type { TasteProfile } from '@/domain/taste/TasteProfile';
 
 const baseProfile: TasteProfile = {
   schemaVersion: 1,
-  genres: ['Ambient'],
-  contexts: ['Focus'],
+  genres: ['Downtempo'],
+  contexts: ['Headphones'],
   dimensions: {
     energy: 25,
     density: 35,
@@ -13,8 +13,8 @@ const baseProfile: TasteProfile = {
     space: 85,
     rhythm: 35,
   },
-  suggestedArtists: ['Jon Hopkins', 'Loscil'],
-  selectedArtists: ['Jon Hopkins'],
+  suggestedArtists: ['Ben Böhmer', 'NTO'],
+  selectedArtists: ['Ben Böhmer'],
   calibration: {
     onboardingWeight: 1,
     behaviorWeight: 0,
@@ -29,7 +29,7 @@ describe('filterRecommendations', () => {
   it('scores tracks by completed profile genre, context, and dimensions', () => {
     expect(filterRecommendations(electronicRecommendationFixtures, baseProfile)[0]).toEqual(
       expect.objectContaining({
-        title: 'Signal Drift',
+        title: 'Beyond Beliefs',
       }),
     );
   });

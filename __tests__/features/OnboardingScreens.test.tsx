@@ -37,8 +37,8 @@ const completedDraft: TasteProfileDraft = {
     space: 60,
     rhythm: 35,
   },
-  suggestedArtists: ['Ben Klock', 'Deepchord', 'Vril'],
-  selectedArtists: ['Ben Klock'],
+  suggestedArtists: ['Boris Brejcha', 'Charlotte de Witte', 'Amelie Lens'],
+  selectedArtists: ['Boris Brejcha'],
 };
 
 describe('Onboarding screens', () => {
@@ -93,7 +93,7 @@ describe('Onboarding screens', () => {
     fireEvent.press(screen.getByText('Review profile'));
     expect(mockPush).not.toHaveBeenCalled();
 
-    fireEvent.press(await screen.findByText('Ben Klock'));
+    fireEvent.press(await screen.findByText('Boris Brejcha'));
     fireEvent.press(screen.getByText('Review profile'));
 
     expect(mockPush).toHaveBeenCalledWith('/onboarding/review');
@@ -102,7 +102,7 @@ describe('Onboarding screens', () => {
   it('saves a completed versioned profile from review', async () => {
     renderWithOnboarding(<ReviewScreen />, completedDraft);
 
-    await screen.findByText('Ben Klock');
+    await screen.findByText('Boris Brejcha');
     fireEvent.press(screen.getByText('Start discovery'));
 
     await waitFor(async () => {
