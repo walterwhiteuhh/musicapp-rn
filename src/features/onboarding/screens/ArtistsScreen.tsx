@@ -7,6 +7,13 @@ import { OnboardingScaffold } from '@/features/onboarding/components/OnboardingS
 import { useOnboarding } from '@/features/onboarding/OnboardingContext';
 import { colors } from '@/theme/colors';
 
+type ArtistVisual = {
+  background: string;
+  primary: string;
+  secondary: string;
+  meta: string;
+};
+
 export function ArtistsScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -23,7 +30,7 @@ export function ArtistsScreen() {
     <OnboardingScaffold
       eyebrow="Step 4 of 5"
       title="Choose one to five reference artists."
-      description="These ten suggestions come from your genres, dimensions, and context. They anchor the initial profile until listening data becomes stronger."
+      description="This wider cluster comes from your scenes, dimensions, and context. Pick references, not a fixed taste box."
     >
       <View style={styles.infoCard}>
         <Text style={styles.infoText}>
@@ -107,78 +114,65 @@ function ArtistCard({
   );
 }
 
-function getArtistVisual(artist: string) {
-  const visuals: Record<string, { background: string; primary: string; secondary: string; meta: string }> = {
-    'Boris Brejcha': {
-      background: '#171018',
-      primary: '#F97316',
-      secondary: '#2DD4BF',
-      meta: 'High-tech minimal',
-    },
-    'Charlotte de Witte': {
-      background: '#0B1018',
-      primary: '#A78BFA',
-      secondary: '#38BDF8',
-      meta: 'Peak-time techno',
-    },
-    'Amelie Lens': {
-      background: '#111827',
-      primary: '#FB7185',
-      secondary: '#2DD4BF',
-      meta: 'Driving techno',
-    },
-    'Paul Kalkbrenner': {
-      background: '#14110D',
-      primary: '#FBBF24',
-      secondary: '#38BDF8',
-      meta: 'Berlin melodic',
-    },
-    'Ben Böhmer': {
-      background: '#08161A',
-      primary: '#22D3EE',
-      secondary: '#A7F3D0',
-      meta: 'Melodic deep',
-    },
-    'KI/KI': {
-      background: '#180F20',
-      primary: '#F472B6',
-      secondary: '#FBBF24',
-      meta: 'Trance / rave',
-    },
-    Bicep: {
-      background: '#101828',
-      primary: '#60A5FA',
-      secondary: '#F472B6',
-      meta: 'Breakbeat warmth',
-    },
-    Overmono: {
-      background: '#0C1218',
-      primary: '#34D399',
-      secondary: '#A78BFA',
-      meta: 'UK breaks',
-    },
-    Burial: {
-      background: '#111111',
-      primary: '#9CA3AF',
-      secondary: '#38BDF8',
-      meta: 'Night garage',
-    },
-    Solomun: {
-      background: '#13120E',
-      primary: '#F59E0B',
-      secondary: '#2DD4BF',
-      meta: 'Club house',
-    },
+function getArtistVisual(artist: string): ArtistVisual {
+  const visuals: Record<string, ArtistVisual> = {
+    'Charlotte de Witte': visual('#0B1018', '#A78BFA', '#38BDF8', 'Belgian peak-time'),
+    'Amelie Lens': visual('#111827', '#FB7185', '#2DD4BF', 'Belgian peak-time'),
+    'Miss Monique': visual('#07151A', '#22D3EE', '#A78BFA', 'Melodic progressive'),
+    'Indira Paganotto': visual('#130B1D', '#F472B6', '#FBBF24', 'Psy / techno pressure'),
+    Alignment: visual('#111020', '#A78BFA', '#FB7185', 'Rave pressure'),
+    '999999999': visual('#150C0C', '#FB7185', '#FBBF24', 'Acid pressure'),
+    'Reinier Zonneveld': visual('#100F0B', '#FBBF24', '#FB7185', 'Acid techno'),
+    ANNA: visual('#081315', '#2DD4BF', '#A78BFA', 'Techno / acid'),
+    'Boris Brejcha': visual('#171018', '#F97316', '#2DD4BF', 'High-tech minimal'),
+    'Ann Clue': visual('#171018', '#F97316', '#A78BFA', 'High-tech minimal'),
+    'Deniz Bul': visual('#18110E', '#F97316', '#FBBF24', 'High-tech minimal'),
+    ARTBAT: visual('#0D1117', '#38BDF8', '#F97316', 'Melodic peak-time'),
+    'Tale Of Us': visual('#101018', '#A78BFA', '#22D3EE', 'Afterlife melodic'),
+    Anyma: visual('#080F18', '#60A5FA', '#34D399', 'Visual melodic'),
+    'Mind Against': visual('#0B1114', '#2DD4BF', '#A78BFA', 'Dark melodic'),
+    Innellea: visual('#111318', '#F472B6', '#38BDF8', 'Melodic tension'),
+    'Ben Boehmer': visual('#08161A', '#22D3EE', '#A7F3D0', 'Melodic deep'),
+    'Stephan Bodzin': visual('#111827', '#38BDF8', '#FBBF24', 'Melodic techno'),
+    NTO: visual('#07151A', '#22D3EE', '#34D399', 'Melodic live'),
+    Worakls: visual('#101014', '#A78BFA', '#FBBF24', 'Orchestral melodic'),
+    'KI/KI': visual('#180F20', '#F472B6', '#FBBF24', 'Trance / rave'),
+    'Marlon Hoffstadt': visual('#1A1020', '#F472B6', '#38BDF8', 'Eurodance pressure'),
+    'DJ Heartstring': visual('#111827', '#F472B6', '#22D3EE', 'Trance revival'),
+    'Job Jobse': visual('#10160F', '#34D399', '#FBBF24', 'Rave selector'),
+    'Anfisa Letyago': visual('#101111', '#FB7185', '#2DD4BF', 'Rolling techno'),
+    Chlar: visual('#111111', '#F97316', '#A78BFA', 'Hardgroove'),
+    'Funk Assault': visual('#101010', '#FBBF24', '#FB7185', 'Hardgroove'),
+    'Ben Klock': visual('#0B1018', '#9CA3AF', '#38BDF8', 'Berlin hypnotic'),
+    DVS1: visual('#0B0E12', '#9CA3AF', '#A78BFA', 'Hypnotic techno'),
+    Rodhad: visual('#0C1014', '#38BDF8', '#9CA3AF', 'Deep techno'),
+    Bicep: visual('#101828', '#60A5FA', '#F472B6', 'Breakbeat warmth'),
+    Overmono: visual('#0C1218', '#34D399', '#A78BFA', 'UK breaks'),
+    Burial: visual('#111111', '#9CA3AF', '#38BDF8', 'Night garage'),
+    'Skee Mask': visual('#0B1114', '#38BDF8', '#34D399', 'Breaks / IDM'),
+    'Aphex Twin': visual('#141414', '#A78BFA', '#34D399', 'IDM / ambient'),
+    'Jon Hopkins': visual('#08161A', '#22D3EE', '#A7F3D0', 'Listening energy'),
+    'Donato Dozzy': visual('#0A1110', '#2DD4BF', '#9CA3AF', 'Deep listening'),
+    Deepchord: visual('#0A1016', '#38BDF8', '#9CA3AF', 'Dub techno'),
+    Calibre: visual('#10150F', '#34D399', '#FBBF24', 'Liquid DnB'),
+    Goldie: visual('#16120B', '#FBBF24', '#F97316', 'DnB history'),
   };
 
-  return (
-    visuals[artist] ?? {
-      background: '#0B1018',
-      primary: colors.primary,
-      secondary: colors.secondary,
-      meta: 'Artist reference',
-    }
-  );
+  return visuals[artist] ?? visual('#0B1018', colors.primary, colors.secondary, 'Artist reference');
+}
+
+function visual(
+  background: string,
+  primary: string,
+  secondary: string,
+  meta: string,
+): ArtistVisual {
+  return {
+    background,
+    primary,
+    secondary,
+    meta,
+  };
 }
 
 const styles = StyleSheet.create({

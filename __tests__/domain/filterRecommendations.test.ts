@@ -5,7 +5,7 @@ import type { TasteProfile } from '@/domain/taste/TasteProfile';
 
 const baseProfile: TasteProfile = {
   schemaVersion: 1,
-  genres: ['Downtempo'],
+  genres: ['Melodic Techno', 'Progressive House'],
   contexts: ['Headphones'],
   dimensions: {
     energy: 25,
@@ -17,7 +17,7 @@ const baseProfile: TasteProfile = {
   suggestedArtists: ['Ben Boehmer', 'NTO'],
   selectedArtists: ['Ben Boehmer'],
   lineageWeights: {
-    'melodic / progressive': 1,
+    'melodic techno / progressive': 1,
   },
   artistAnchorWeights: {
     'Ben Boehmer': 1,

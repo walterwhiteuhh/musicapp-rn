@@ -29,7 +29,7 @@ function renderWithOnboarding(ui: ReactElement, initialDraft?: TasteProfileDraft
 }
 
 const completedDraft: TasteProfileDraft = {
-  genres: ['Techno', 'Dub Techno'],
+  genres: ['Peak-time Techno', 'Dub Techno'],
   contexts: ['Club'],
   dimensions: {
     energy: 70,
@@ -71,7 +71,7 @@ describe('Onboarding screens', () => {
     fireEvent.press(screen.getByText('Next'));
     expect(mockPush).not.toHaveBeenCalled();
 
-    fireEvent.press(screen.getByText('Techno'));
+    fireEvent.press(screen.getByText('Peak-time Techno'));
     fireEvent.press(screen.getByText('House'));
     fireEvent.press(screen.getByText('Next'));
 

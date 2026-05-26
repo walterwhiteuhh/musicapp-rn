@@ -54,7 +54,7 @@ describe('DiscoverScreen', () => {
       tasteProfileStorageKey,
       JSON.stringify({
         schemaVersion: 1,
-        genres: ['Downtempo'],
+        genres: ['Melodic Techno', 'Progressive House'],
         contexts: ['Headphones'],
         dimensions: {
           energy: 25,
