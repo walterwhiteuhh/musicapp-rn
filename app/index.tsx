@@ -1,5 +1,5 @@
-import { SearchScreen } from '@/features/search/SearchScreen';
+import { Redirect } from 'expo-router';
 
 export default function IndexRoute() {
-  return <SearchScreen />;
+  return <Redirect href={'/(tabs)' as never} />;
 }

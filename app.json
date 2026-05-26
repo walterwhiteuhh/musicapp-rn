@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "MusicApp",
-    "slug": "musicapp-rn",
+    "name": "Klangfeld",
+    "slug": "klangfeld",
     "version": "1.0.0",
-    "scheme": "musicapp",
+    "scheme": "klangfeld",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -14,10 +14,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.example.musicapp"
+      "bundleIdentifier": "com.klangfeld.app"
     },
     "android": {
-      "package": "com.example.musicapp",
+      "package": "com.klangfeld.app",
       "versionCode": 1,
       "permissions": [],
       "adaptiveIcon": {
@@ -29,6 +29,11 @@
     "plugins": [
       "expo-router"
     ],
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/icon.png"
+    },
     "experiments": {
       "typedRoutes": true
     }

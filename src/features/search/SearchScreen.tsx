@@ -8,12 +8,13 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ScreenContainer } from '@/components/ScreenContainer';
 import { createDefaultMusicProvider } from '@/data/music/createDefaultMusicProvider';
 import type { SearchTracksUseCase } from '@/domain/music/SearchTracksUseCase';
 import { SearchTracksUseCase as DefaultSearchTracksUseCase } from '@/domain/music/SearchTracksUseCase';
 import type { Track } from '@/domain/music/Track';
+import { colors } from '@/theme/colors';
 
 type SearchStatus = 'idle' | 'loading' | 'success' | 'empty' | 'error';
 
@@ -45,10 +46,13 @@ export function SearchScreen({ searchTracksUseCase }: SearchScreenProps) {
   };
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <ScreenContainer>
       <View style={styles.header}>
-        <Text style={styles.title}>MusicApp</Text>
-        <Text style={styles.subtitle}>SoundCloud search</Text>
+        <Text style={styles.eyebrow}>Search</Text>
+        <Text style={styles.title}>Find electronic tracks and artists.</Text>
+        <Text style={styles.subtitle}>
+          Demo fixtures are active until the secure SoundCloud proxy is added.
+        </Text>
       </View>
 
       <View style={styles.searchBar}>
@@ -96,7 +100,7 @@ export function SearchScreen({ searchTracksUseCase }: SearchScreenProps) {
           renderItem={({ item }) => <TrackResult track={item} />}
         />
       )}
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
 
@@ -129,22 +133,28 @@ function StateMessage({ text, tone = 'neutral' }: { text: string; tone?: 'neutra
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#0B0F14',
-    paddingHorizontal: 20,
   },
   header: {
     paddingBottom: 20,
-    paddingTop: 24,
+    paddingTop: 20,
+    gap: 8,
+  },
+  eyebrow: {
+    color: colors.primary,
+    fontSize: 13,
+    fontWeight: '800',
+    textTransform: 'uppercase',
   },
   title: {
-    color: '#F5F7FA',
-    fontSize: 32,
-    fontWeight: '700',
+    color: colors.text,
+    fontSize: 31,
+    fontWeight: '800',
+    lineHeight: 37,
   },
   subtitle: {
-    color: '#A7B0BE',
+    color: colors.muted,
     fontSize: 16,
-    marginTop: 4,
+    lineHeight: 23,
   },
   searchBar: {
     alignItems: 'center',
@@ -152,11 +162,11 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   input: {
-    backgroundColor: '#171D26',
-    borderColor: '#2A3441',
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
     borderRadius: 8,
     borderWidth: 1,
-    color: '#F5F7FA',
+    color: colors.text,
     flex: 1,
     fontSize: 16,
     minHeight: 48,
@@ -164,7 +174,7 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     alignItems: 'center',
-    backgroundColor: '#5DE4C7',
+    backgroundColor: colors.primary,
     borderRadius: 8,
     justifyContent: 'center',
     minHeight: 48,
@@ -178,7 +188,7 @@ const styles = StyleSheet.create({
     opacity: 0.55,
   },
   searchButtonText: {
-    color: '#07100D',
+    color: '#06110F',
     fontSize: 16,
     fontWeight: '700',
   },
@@ -189,12 +199,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   stateText: {
-    color: '#A7B0BE',
+    color: colors.muted,
     fontSize: 16,
     textAlign: 'center',
   },
   errorText: {
-    color: '#FF8A8A',
+    color: colors.danger,
   },
   results: {
     gap: 10,
@@ -203,8 +213,8 @@ const styles = StyleSheet.create({
   },
   trackRow: {
     alignItems: 'center',
-    backgroundColor: '#171D26',
-    borderColor: '#2A3441',
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
     borderRadius: 8,
     borderWidth: 1,
     flexDirection: 'row',
@@ -214,14 +224,14 @@ const styles = StyleSheet.create({
   },
   artworkPlaceholder: {
     alignItems: 'center',
-    backgroundColor: '#2A3441',
+    backgroundColor: colors.elevated,
     borderRadius: 6,
     height: 50,
     justifyContent: 'center',
     width: 50,
   },
   artworkText: {
-    color: '#5DE4C7',
+    color: colors.primary,
     fontSize: 20,
     fontWeight: '700',
   },
@@ -229,12 +239,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   trackTitle: {
-    color: '#F5F7FA',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '700',
   },
   artistName: {
-    color: '#A7B0BE',
+    color: colors.muted,
     fontSize: 14,
     marginTop: 4,
   },

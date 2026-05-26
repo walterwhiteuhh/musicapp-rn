@@ -1,0 +1,48 @@
+import type { RecommendationTrack } from '@/domain/recommendations/RecommendationTrack';
+
+export const electronicRecommendationFixtures: RecommendationTrack[] = [
+  {
+    id: 'rec-101',
+    title: 'Late Night Signal',
+    artistName: 'Mira Vale',
+    artworkUrl: null,
+    durationMs: 184000,
+    source: 'soundcloud',
+    genre: 'Techno',
+    mood: 'Hypnotic',
+    reason: 'Matches your interest in pulsing, late-night club rhythms.',
+  },
+  {
+    id: 'rec-102',
+    title: 'Metro Pulse',
+    artistName: 'Northline',
+    artworkUrl: null,
+    durationMs: 216000,
+    source: 'soundcloud',
+    genre: 'House',
+    mood: 'Groovy',
+    reason: 'A warm groove with a steady four-on-the-floor shape for discovery sessions.',
+  },
+  {
+    id: 'rec-103',
+    title: 'Signal Drift',
+    artistName: 'Mira Vale',
+    artworkUrl: null,
+    durationMs: 197000,
+    source: 'soundcloud',
+    genre: 'Ambient',
+    mood: 'Atmospheric',
+    reason: 'Uses slow pads and sparse percussion for a calmer electronic direction.',
+  },
+  {
+    id: 'rec-104',
+    title: 'Morning Static',
+    artistName: 'The Relay',
+    artworkUrl: null,
+    durationMs: 205000,
+    source: 'soundcloud',
+    genre: 'Electro',
+    mood: 'Energetic',
+    reason: 'Brighter synth patterns add contrast to darker, minimal selections.',
+  },
+];

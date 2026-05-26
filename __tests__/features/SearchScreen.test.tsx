@@ -32,7 +32,7 @@ describe('SearchScreen', () => {
   it('renders the initial search state', () => {
     renderWithProvider({ searchTracks: jest.fn() });
 
-    expect(screen.getByText('MusicApp')).toBeTruthy();
+    expect(screen.getByText('Find electronic tracks and artists.')).toBeTruthy();
     expect(screen.getByPlaceholderText('Track or artist')).toBeTruthy();
     expect(screen.getByText('Start with a track or artist name.')).toBeTruthy();
   });
