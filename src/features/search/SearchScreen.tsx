@@ -10,8 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { appConfig } from '@/config/appConfig';
-import { SoundCloudProvider } from '@/data/music/SoundCloudProvider';
+import { createDefaultMusicProvider } from '@/data/music/createDefaultMusicProvider';
 import type { SearchTracksUseCase } from '@/domain/music/SearchTracksUseCase';
 import { SearchTracksUseCase as DefaultSearchTracksUseCase } from '@/domain/music/SearchTracksUseCase';
 import type { Track } from '@/domain/music/Track';
@@ -24,11 +23,7 @@ type SearchScreenProps = {
 
 export function SearchScreen({ searchTracksUseCase }: SearchScreenProps) {
   const defaultUseCase = useMemo(() => {
-    return new DefaultSearchTracksUseCase(
-      new SoundCloudProvider({
-        baseUrl: appConfig.musicApiBaseUrl,
-      }),
-    );
+    return new DefaultSearchTracksUseCase(createDefaultMusicProvider());
   }, []);
 
   const useCase = searchTracksUseCase ?? defaultUseCase;

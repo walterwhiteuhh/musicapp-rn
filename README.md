@@ -37,3 +37,5 @@ Before submitting to Google Play, replace the placeholder package ID and app bra
 ## SoundCloud Boundary
 
 The mobile app does not embed a `client_secret`. The `SoundCloudProvider` accepts an access-token provider so a later backend/proxy can own OAuth token exchange safely. Iteration 1 uses tested mapping and mockable fetch boundaries.
+
+By default, the app uses local SoundCloud-style fixtures so Expo Go and web preview are immediately interactive. Set `EXPO_PUBLIC_USE_LIVE_SOUNDCLOUD_API=true` only after a safe token/proxy flow exists.

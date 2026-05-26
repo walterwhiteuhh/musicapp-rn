@@ -1,0 +1,15 @@
+import { createDefaultMusicProvider } from '@/data/music/createDefaultMusicProvider';
+
+describe('createDefaultMusicProvider', () => {
+  it('uses demo fixtures by default so local previews are interactive', async () => {
+    const provider = createDefaultMusicProvider();
+
+    await expect(provider.searchTracks('signal')).resolves.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          title: 'Late Night Signal',
+        }),
+      ]),
+    );
+  });
+});
