@@ -26,6 +26,7 @@ export function DiscoverScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const [profile, setProfile] = useState<TasteProfile | null>(null);
+  const [focusTrack, setFocusTrack] = useState<RecommendationTrack | null>(null);
   const useGrid = Platform.OS === 'web' && width >= 780;
 
   useEffect(() => {
@@ -33,8 +34,16 @@ export function DiscoverScreen() {
   }, []);
 
   const recommendations = useMemo(() => {
-    return filterRecommendations(electronicRecommendationFixtures, profile);
-  }, [profile]);
+    const baseRecommendations = filterRecommendations(electronicRecommendationFixtures, profile);
+
+    if (!focusTrack) {
+      return baseRecommendations;
+    }
+
+    return [...baseRecommendations].sort(
+      (left, right) => scoreSimilarity(right, focusTrack) - scoreSimilarity(left, focusTrack),
+    );
+  }, [focusTrack, profile]);
   const featuredTrack = recommendations[0] ?? null;
   const feedTracks = featuredTrack ? recommendations.slice(1) : recommendations;
 
@@ -58,8 +67,23 @@ export function DiscoverScreen() {
                 </ActionButton>
               )}
             </View>
-            {featuredTrack ? <FeaturedPreview track={featuredTrack} /> : null}
-            <Text style={styles.sectionTitle}>Next signals</Text>
+            {featuredTrack ? (
+              <FeaturedPreview
+                focusActive={Boolean(focusTrack)}
+                track={featuredTrack}
+                onMoreLikeThis={() => setFocusTrack(featuredTrack)}
+              />
+            ) : null}
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>
+                {focusTrack ? `More like ${focusTrack.artistName}` : 'Next signals'}
+              </Text>
+              {focusTrack ? (
+                <Pressable accessibilityRole="button" style={styles.clearFocus} onPress={() => setFocusTrack(null)}>
+                  <Text style={styles.clearFocusText}>Reset</Text>
+                </Pressable>
+              ) : null}
+            </View>
           </View>
         }
         columnWrapperStyle={useGrid ? styles.columnWrapper : undefined}
@@ -73,7 +97,15 @@ export function DiscoverScreen() {
   );
 }
 
-function FeaturedPreview({ track }: { track: RecommendationTrack }) {
+function FeaturedPreview({
+  focusActive,
+  track,
+  onMoreLikeThis,
+}: {
+  focusActive: boolean;
+  track: RecommendationTrack;
+  onMoreLikeThis: () => void;
+}) {
   return (
     <View style={styles.featuredCard}>
       <Text style={styles.previewLabel}>Featured from your Klangprofil</Text>
@@ -97,11 +129,16 @@ function FeaturedPreview({ track }: { track: RecommendationTrack }) {
           <Text style={styles.previewUnavailable}>Playback arrives later. Discovery data is active.</Text>
         </View>
       </View>
-      <View style={styles.primaryActions}>
-        <ActionPill label="Save" />
-        <ActionPill label="More like this" />
-        <ActionPill label="Skip" muted />
+      <View style={styles.matchStrip}>
+        <Text style={styles.matchText}>{track.genre}</Text>
+        <Text style={styles.matchDivider}>/</Text>
+        <Text style={styles.matchText}>{track.contexts.join(' + ')}</Text>
       </View>
+      <Pressable accessibilityRole="button" style={styles.moreLikeButton} onPress={onMoreLikeThis}>
+        <Text style={styles.moreLikeButtonText}>
+          {focusActive ? 'Refresh similar signals' : 'More like this'}
+        </Text>
+      </Pressable>
       <View style={styles.reasonBox}>
         <Text style={styles.reasonLabel}>Why this leads</Text>
         <Text style={styles.reasonText}>{track.reason}</Text>
@@ -157,21 +194,9 @@ function RecommendationCard({ track }: { track: RecommendationTrack }) {
           <Text style={styles.reasonLabel}>Why recommended</Text>
           <Text style={styles.reasonText}>{track.reason}</Text>
         </View>
-        <View style={styles.primaryActions}>
-          <ActionPill label="Save" />
-          <ActionPill label="Tune profile" />
-        </View>
         <SourceLink track={track} compact />
       </View>
     </View>
-  );
-}
-
-function ActionPill({ label, muted = false }: { label: string; muted?: boolean }) {
-  return (
-    <Pressable accessibilityRole="button" style={[styles.actionPill, muted && styles.actionPillMuted]}>
-      <Text style={[styles.actionPillText, muted && styles.actionPillTextMuted]}>{label}</Text>
-    </Pressable>
   );
 }
 
@@ -220,6 +245,39 @@ function formatDuration(durationMs: number) {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
+function scoreSimilarity(track: RecommendationTrack, focusTrack: RecommendationTrack): number {
+  let score = 0;
+
+  if (track.id === focusTrack.id) {
+    score += 10;
+  }
+
+  if (track.genre === focusTrack.genre) {
+    score += 4;
+  }
+
+  score += track.contexts.filter((context) => focusTrack.contexts.includes(context)).length * 2;
+  score += Math.max(0, 4 - dimensionDistance(track, focusTrack) / 25);
+  score +=
+    track.relatedArtists?.filter((artist) => focusTrack.relatedArtists?.includes(artist)).length ??
+    0;
+
+  return score;
+}
+
+function dimensionDistance(left: RecommendationTrack, right: RecommendationTrack): number {
+  const keys: (keyof RecommendationTrack['dimensions'])[] = [
+    'energy',
+    'density',
+    'texture',
+    'space',
+    'rhythm',
+  ];
+
+  return keys.reduce((sum, key) => sum + Math.abs(left.dimensions[key] - right.dimensions[key]), 0) /
+    keys.length;
+}
+
 const styles = StyleSheet.create({
   list: {
     gap: 14,
@@ -244,9 +302,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 31,
+    fontSize: 28,
     fontWeight: '800',
-    lineHeight: 37,
+    lineHeight: 33,
   },
   subtitle: {
     color: colors.muted,
@@ -259,13 +317,32 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     paddingTop: 2,
   },
+  sectionHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'space-between',
+  },
+  clearFocus: {
+    backgroundColor: colors.elevated,
+    borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  clearFocusText: {
+    color: colors.muted,
+    fontSize: 12,
+    fontWeight: '900',
+  },
   featuredCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: 8,
     borderWidth: 1,
-    gap: 14,
-    padding: 16,
+    gap: 12,
+    padding: 14,
   },
   previewLabel: {
     color: colors.primary,
@@ -278,26 +355,30 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 8,
     borderWidth: 1,
-    gap: 16,
-    padding: 16,
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 14,
+    padding: 12,
   },
   previewSignal: {
     alignItems: 'flex-end',
     flexDirection: 'row',
-    gap: 8,
-    height: 76,
+    gap: 5,
+    height: 50,
+    width: 96,
   },
   previewBar: {
     backgroundColor: colors.primary,
     borderRadius: 999,
-    width: 10,
+    width: 7,
   },
   playerCopy: {
+    flex: 1,
     gap: 6,
   },
   featuredTitle: {
     color: colors.text,
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: '900',
   },
   featuredArtist: {
@@ -307,8 +388,8 @@ const styles = StyleSheet.create({
   },
   previewUnavailable: {
     color: colors.muted,
-    fontSize: 13,
-    lineHeight: 19,
+    fontSize: 12,
+    lineHeight: 17,
   },
   card: {
     backgroundColor: colors.surface,
@@ -321,7 +402,7 @@ const styles = StyleSheet.create({
   artwork: {
     backgroundColor: '#071018',
     gap: 10,
-    minHeight: 118,
+    minHeight: 86,
     justifyContent: 'space-between',
     padding: 16,
   },
@@ -348,8 +429,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   cardBody: {
-    gap: 12,
-    padding: 16,
+    gap: 10,
+    padding: 14,
   },
   cardHeader: {
     alignItems: 'flex-start',
@@ -362,7 +443,7 @@ const styles = StyleSheet.create({
   },
   trackTitle: {
     color: colors.text,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '800',
   },
   artistName: {
@@ -438,8 +519,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 8,
     borderWidth: 1,
-    gap: 5,
-    padding: 12,
+    gap: 4,
+    padding: 10,
   },
   reasonLabel: {
     color: colors.secondary,
@@ -452,39 +533,48 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
-  primaryActions: {
+  matchStrip: {
+    alignItems: 'center',
+    backgroundColor: '#071018',
+    borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 7,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
   },
-  actionPill: {
+  matchText: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  matchDivider: {
+    color: colors.muted,
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  moreLikeButton: {
     alignItems: 'center',
     backgroundColor: colors.primary,
     borderRadius: 8,
-    minHeight: 38,
+    minHeight: 40,
     justifyContent: 'center',
     paddingHorizontal: 12,
   },
-  actionPillMuted: {
-    backgroundColor: colors.elevated,
-    borderColor: colors.border,
-    borderWidth: 1,
-  },
-  actionPillText: {
+  moreLikeButtonText: {
     color: '#06110F',
     fontSize: 13,
     fontWeight: '900',
   },
-  actionPillTextMuted: {
-    color: colors.muted,
-  },
   sourceLink: {
-    backgroundColor: '#15100B',
+    backgroundColor: '#10151C',
     borderColor: '#FF5500',
     borderRadius: 8,
     borderWidth: 1,
     gap: 3,
-    padding: 12,
+    padding: 10,
   },
   sourceLinkCompact: {
     paddingVertical: 10,

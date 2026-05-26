@@ -39,6 +39,15 @@ describe('DiscoverScreen', () => {
     expect(Linking.openURL).toHaveBeenCalledWith('https://soundcloud.com/boris-brejcha');
   });
 
+  it('uses more like this to focus the next signals list', async () => {
+    render(<DiscoverScreen />);
+
+    fireEvent.press(await screen.findByText('More like this'));
+
+    expect(await screen.findByText('More like Boris Brejcha')).toBeTruthy();
+    expect(screen.getByText('Reset')).toBeTruthy();
+  });
+
   it('shows profile-shaped recommendations when a versioned profile exists', async () => {
     await AsyncStorage.setItem(
       tasteProfileStorageKey,
