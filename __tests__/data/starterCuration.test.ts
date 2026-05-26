@@ -59,4 +59,19 @@ describe('starterCuration', () => {
     );
     expect((benKlock?.independence ?? 0) > (bicep?.independence ?? 0)).toBe(true);
   });
+
+  it('keeps current hard-techno momentum separate from trance legacy anchors', () => {
+    const lilly = starterArtistReferences.find((artist) => artist.name === 'Lilly Palmer');
+    const armin = starterArtistReferences.find((artist) => artist.name === 'Armin van Buuren');
+    const tiesto = starterArtistReferences.find((artist) => artist.name === 'Tiesto');
+
+    expect(lilly).toEqual(
+      expect.objectContaining({
+        lineages: expect.arrayContaining(['hard techno / hard dance crossover']),
+        currentRelevance: expect.any(Number),
+      }),
+    );
+    expect(armin?.historicalWeight).toBeGreaterThan(lilly?.historicalWeight ?? 0);
+    expect(tiesto?.historicalWeight).toBeGreaterThan(lilly?.historicalWeight ?? 0);
+  });
 });

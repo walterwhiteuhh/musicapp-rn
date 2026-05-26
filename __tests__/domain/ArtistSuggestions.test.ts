@@ -3,7 +3,7 @@ import { createInitialDiscoveryDepth } from '@/domain/catalog';
 import { artistSuggestionLimit, deriveArtistSuggestions } from '@/features/onboarding/options';
 
 const peakTimeDraft: TasteProfileDraft = {
-  genres: ['Peak-time Techno', 'Hard Techno', 'Trance Revival'],
+  genres: ['Peak-time Techno', 'Acid Techno'],
   contexts: ['Club', 'Afterhours'],
   dimensions: {
     energy: 72,
@@ -69,5 +69,24 @@ describe('deriveArtistSuggestions', () => {
     });
 
     expect(suggestions.slice(0, 4)).toContain('Boris Brejcha');
+  });
+
+  it('places Lilly Palmer in the hard-techno mainstage path with trance legacy nearby', () => {
+    const suggestions = deriveArtistSuggestions({
+      ...peakTimeDraft,
+      genres: ['Hard Techno', 'Trance Revival'],
+      contexts: ['Club', 'Training'],
+      dimensions: {
+        energy: 86,
+        density: 76,
+        texture: 68,
+        space: 40,
+        rhythm: 46,
+      },
+    });
+
+    expect(suggestions.slice(0, 6)).toContain('Lilly Palmer');
+    expect(suggestions).toEqual(expect.arrayContaining(['Armin van Buuren', 'Tiesto']));
+    expect(suggestions.slice(0, 8)).not.toContain('Boris Brejcha');
   });
 });

@@ -76,6 +76,37 @@ describe('filterRecommendations', () => {
     expect(firstTrack.culturalContext).toContain('Long-form melodic live performance');
   });
 
+  it('treats genres as weighted tags rather than exclusive categories', () => {
+    const recommendations = filterRecommendations(electronicRecommendationFixtures, {
+      ...baseProfile,
+      genres: ['Trance Revival'],
+      contexts: ['Club'],
+      selectedArtists: [],
+      dimensions: {
+        energy: 86,
+        density: 76,
+        texture: 68,
+        space: 40,
+        rhythm: 46,
+      },
+    });
+    const lillyRecommendationIndex = recommendations.findIndex(
+      (track) => track.artistName === 'Lilly Palmer',
+    );
+
+    expect(lillyRecommendationIndex).toBeGreaterThanOrEqual(0);
+    expect(lillyRecommendationIndex).toBeLessThan(4);
+    expect(recommendations[lillyRecommendationIndex]).toEqual(
+      expect.objectContaining({
+        artistName: 'Lilly Palmer',
+        styleTags: expect.arrayContaining([
+          expect.objectContaining({ tag: 'Trance Revival' }),
+          expect.objectContaining({ tag: 'Hard Techno' }),
+        ]),
+      }),
+    );
+  });
+
   it('falls back to all tracks when there is no useful match', () => {
     expect(
       filterRecommendations(electronicRecommendationFixtures, {

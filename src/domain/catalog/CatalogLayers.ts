@@ -31,6 +31,9 @@ export type SourceSet = {
   title: string;
   sourceArtistIds: string[];
   eventName?: string | null;
+  seriesTitle?: string | null;
+  episodeNumber?: string | null;
+  durationMs?: number;
   recordedAt?: string | null;
 };
 

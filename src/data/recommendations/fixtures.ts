@@ -12,6 +12,18 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     relatedArtists: ['Boris Brejcha', 'Ann Clue', 'Deniz Bul'],
     genreLineage: 'high-tech minimal',
     genre: 'High-tech Minimal',
+    styleTags: [
+      { tag: 'High-tech Minimal', weight: 1 },
+      { tag: 'Peak-time Techno', weight: 0.45 },
+    ],
+    sceneTags: [
+      { tag: 'high-tech minimal', weight: 1 },
+      { tag: 'European high-tech minimal', weight: 0.8 },
+    ],
+    functionTags: [
+      { tag: 'gateway artist set', weight: 0.8 },
+      { tag: 'club pressure', weight: 0.55 },
+    ],
     contexts: ['Club', 'Afterhours'],
     dimensions: {
       energy: 75,
@@ -50,6 +62,18 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     relatedArtists: ['Ben Boehmer', 'NTO', 'Worakls'],
     genreLineage: 'melodic techno / progressive',
     genre: 'Melodic Techno',
+    styleTags: [
+      { tag: 'Melodic Techno', weight: 1 },
+      { tag: 'Progressive House', weight: 0.75 },
+    ],
+    sceneTags: [
+      { tag: 'melodic techno / progressive', weight: 1 },
+      { tag: 'European melodic house', weight: 0.7 },
+    ],
+    functionTags: [
+      { tag: 'headphone long-form', weight: 0.85 },
+      { tag: 'melodic decompression', weight: 0.75 },
+    ],
     contexts: ['Home', 'Headphones'],
     dimensions: {
       energy: 63,
@@ -82,6 +106,19 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     relatedArtists: ['Miss Monique', 'ARTBAT', 'Tale Of Us', 'Anyma', 'Mind Against'],
     genreLineage: 'melodic techno / progressive',
     genre: 'Melodic Techno',
+    styleTags: [
+      { tag: 'Melodic Techno', weight: 1 },
+      { tag: 'Progressive House', weight: 0.9 },
+      { tag: 'Trance Revival', weight: 0.35 },
+    ],
+    sceneTags: [
+      { tag: 'melodic techno / progressive', weight: 1 },
+      { tag: 'modern festival web-set', weight: 0.75 },
+    ],
+    functionTags: [
+      { tag: 'accessible festival bridge', weight: 0.85 },
+      { tag: 'night-drive lift', weight: 0.7 },
+    ],
     contexts: ['Club', 'Night drive', 'Headphones'],
     dimensions: {
       energy: 64,
@@ -114,6 +151,21 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     relatedArtists: ['Charlotte de Witte', 'Amelie Lens', 'Indira Paganotto', 'Miss Monique'],
     genreLineage: 'Belgian peak-time techno',
     genre: 'Peak-time Techno',
+    styleTags: [
+      { tag: 'Peak-time Techno', weight: 1 },
+      { tag: 'Hard Techno', weight: 0.7 },
+      { tag: 'Acid Techno', weight: 0.45 },
+      { tag: 'Trance Revival', weight: 0.35 },
+    ],
+    sceneTags: [
+      { tag: 'Belgian peak-time techno', weight: 1 },
+      { tag: 'modern acid / trance pressure', weight: 0.75 },
+      { tag: 'KNTXT-adjacent peak-time', weight: 0.8 },
+    ],
+    functionTags: [
+      { tag: 'festival pressure', weight: 1 },
+      { tag: 'mainstage peak', weight: 0.85 },
+    ],
     contexts: ['Club', 'Training'],
     dimensions: {
       energy: 84,
@@ -146,6 +198,20 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     relatedArtists: ['Charlotte de Witte', 'Amelie Lens', 'Enrico Sangiuliano', 'Age Of Love', 'Jam & Spoon'],
     genreLineage: 'modern acid / trance pressure',
     genre: 'Trance Revival',
+    styleTags: [
+      { tag: 'Trance Revival', weight: 1 },
+      { tag: 'Acid Techno', weight: 0.75 },
+      { tag: 'Peak-time Techno', weight: 0.55 },
+    ],
+    sceneTags: [
+      { tag: 'early trance / rave', weight: 1 },
+      { tag: 'modern acid / trance pressure', weight: 0.95 },
+      { tag: 'mainstage trance legacy', weight: 0.7 },
+    ],
+    functionTags: [
+      { tag: 'classic version chain', weight: 1 },
+      { tag: 'anthem reuse', weight: 0.9 },
+    ],
     contexts: ['Afterhours', 'Night drive'],
     dimensions: {
       energy: 68,
@@ -176,6 +242,63 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
   },
   {
     id: 'rec-106',
+    title: 'Spannung Radio Show 054',
+    artistName: 'Lilly Palmer',
+    artworkUrl: null,
+    durationMs: 3600000,
+    source: 'soundcloud',
+    externalUrl: 'https://soundcloud.com/lilly_palmer/lilly-palmer-pres-spannung-radio-show-054',
+    relatedArtists: ['Lilly Palmer', 'Charlotte de Witte', 'Amelie Lens', 'Armin van Buuren', 'Tiesto'],
+    genreLineage: 'hard techno / hard dance crossover',
+    genre: 'Hard Techno',
+    styleTags: [
+      { tag: 'Hard Techno', weight: 1 },
+      { tag: 'Peak-time Techno', weight: 0.82 },
+      { tag: 'Trance Revival', weight: 0.65 },
+      { tag: 'Hard Dance', weight: 0.45 },
+    ],
+    sceneTags: [
+      { tag: 'hard techno / hard dance crossover', weight: 1 },
+      { tag: 'mainstage trance legacy', weight: 0.75 },
+      { tag: 'modern acid / trance pressure', weight: 0.6 },
+      { tag: 'German hard-techno momentum', weight: 0.8 },
+    ],
+    functionTags: [
+      { tag: 'radio-show discovery', weight: 1 },
+      { tag: 'mainstage pressure', weight: 0.9 },
+      { tag: 'training drive', weight: 0.75 },
+    ],
+    contexts: ['Club', 'Training', 'Afterhours'],
+    dimensions: {
+      energy: 88,
+      density: 78,
+      texture: 70,
+      space: 34,
+      rhythm: 46,
+    },
+    culturalContext:
+      'Radio-show source, not just a track: useful for modeling modern German hard-techno momentum, mainstage pressure, and the bridge back to trance-era festival infrastructure.',
+    reason:
+      'A current upper-league signal when the profile wants harder pressure without losing melodic/trance-readable festival structure.',
+    technicalProfile: {
+      bpmRange: '140-150+',
+      kickPressure: 'high',
+      dropDensity: 'high',
+      melodicLift: 'medium',
+      legacySignals: ['trance legacy', 'mainstage pressure'],
+    },
+    sourceLinks: [
+      {
+        label: 'SoundCloud radio show',
+        provider: 'soundcloud',
+        kind: 'radio-show',
+        url: 'https://soundcloud.com/lilly_palmer/lilly-palmer-pres-spannung-radio-show-054',
+        context: 'Spannung Radio Show / Episode 054',
+      },
+    ],
+  },
+  {
+    id: 'rec-107',
     title: 'Four Four Global Mix 048',
     artistName: 'Anfisa Letyago',
     artworkUrl: null,
@@ -185,6 +308,18 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     relatedArtists: ['Anfisa Letyago', 'Charlotte de Witte', 'Amelie Lens'],
     genreLineage: 'hardgroove',
     genre: 'Hardgroove',
+    styleTags: [
+      { tag: 'Hardgroove', weight: 1 },
+      { tag: 'Peak-time Techno', weight: 0.55 },
+    ],
+    sceneTags: [
+      { tag: 'hardgroove', weight: 1 },
+      { tag: 'modern rolling techno', weight: 0.7 },
+    ],
+    functionTags: [
+      { tag: 'rhythm workout', weight: 0.9 },
+      { tag: 'club rolling pressure', weight: 0.8 },
+    ],
     contexts: ['Club', 'Training'],
     dimensions: {
       energy: 78,
@@ -207,7 +342,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     ],
   },
   {
-    id: 'rec-107',
+    id: 'rec-108',
     title: 'Music profile',
     artistName: 'Bicep',
     artworkUrl: null,
@@ -217,6 +352,18 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     relatedArtists: ['Bicep', 'Overmono', 'Burial'],
     genreLineage: 'UK breaks / garage',
     genre: 'Breakbeat',
+    styleTags: [
+      { tag: 'Breakbeat', weight: 1 },
+      { tag: 'UK Garage', weight: 0.5 },
+    ],
+    sceneTags: [
+      { tag: 'UK breaks / garage', weight: 1 },
+      { tag: 'club nostalgia', weight: 0.7 },
+    ],
+    functionTags: [
+      { tag: 'headphone club memory', weight: 0.85 },
+      { tag: 'breakbeat warmth', weight: 0.75 },
+    ],
     contexts: ['Headphones', 'Home'],
     dimensions: {
       energy: 62,
@@ -238,7 +385,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     ],
   },
   {
-    id: 'rec-108',
+    id: 'rec-109',
     title: 'Chambord x Cercle Festival 2019',
     artistName: 'Solomun',
     artworkUrl: null,
@@ -248,6 +395,19 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     relatedArtists: ['Solomun', 'Paul Kalkbrenner', 'Koelsch'],
     genreLineage: 'melodic techno / progressive',
     genre: 'House',
+    styleTags: [
+      { tag: 'House', weight: 1 },
+      { tag: 'Progressive House', weight: 0.65 },
+      { tag: 'Melodic Techno', weight: 0.45 },
+    ],
+    sceneTags: [
+      { tag: 'melodic techno / progressive', weight: 0.8 },
+      { tag: 'European festival house', weight: 0.85 },
+    ],
+    functionTags: [
+      { tag: 'long-form house arc', weight: 1 },
+      { tag: 'accessible festival bridge', weight: 0.65 },
+    ],
     contexts: ['Home', 'Afterhours'],
     dimensions: {
       energy: 61,
@@ -270,7 +430,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     ],
   },
   {
-    id: 'rec-109',
+    id: 'rec-110',
     title: 'Music profile',
     artistName: 'Paul Kalkbrenner',
     artworkUrl: null,
@@ -280,6 +440,18 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     relatedArtists: ['Paul Kalkbrenner', 'Solomun', 'Koelsch'],
     genreLineage: 'melodic techno / progressive',
     genre: 'House',
+    styleTags: [
+      { tag: 'House', weight: 1 },
+      { tag: 'Melodic Techno', weight: 0.55 },
+    ],
+    sceneTags: [
+      { tag: 'melodic techno / progressive', weight: 0.7 },
+      { tag: 'Berlin melodic recognition', weight: 0.8 },
+    ],
+    functionTags: [
+      { tag: 'recognizable anchor', weight: 0.9 },
+      { tag: 'home afterhours bridge', weight: 0.65 },
+    ],
     contexts: ['Home', 'Afterhours'],
     dimensions: {
       energy: 58,

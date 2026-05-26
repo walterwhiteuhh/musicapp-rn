@@ -9,6 +9,7 @@ export type RecommendationSourceKind =
   | 'classic-version'
   | 'live-set'
   | 'festival-set'
+  | 'radio-show'
   | 'cultural-reference';
 
 export type RecommendationSourceLink = {
@@ -19,13 +20,28 @@ export type RecommendationSourceLink = {
   context?: string;
 };
 
+export type WeightedTag = {
+  tag: string;
+  weight: number;
+};
+
 export type RecommendationTrack = Track & {
   genre: string;
+  styleTags?: WeightedTag[];
+  sceneTags?: WeightedTag[];
+  functionTags?: WeightedTag[];
   contexts: ListeningContext[];
   dimensions: TrackDimensions;
   reason: string;
   genreLineage?: string;
   culturalContext?: string;
+  technicalProfile?: {
+    bpmRange?: string;
+    kickPressure?: 'low' | 'medium' | 'high' | 'extreme';
+    dropDensity?: 'low' | 'medium' | 'high';
+    melodicLift?: 'low' | 'medium' | 'high';
+    legacySignals?: string[];
+  };
   relatedArtists?: string[];
   sourceLinks?: RecommendationSourceLink[];
 };

@@ -132,7 +132,7 @@ function FeaturedPreview({
         </View>
       </View>
       <View style={styles.matchStrip}>
-        <Text style={styles.matchText}>{track.genre}</Text>
+        <Text style={styles.matchText}>{formatWeightedTags(track.styleTags, track.genre)}</Text>
         <Text style={styles.matchDivider}>/</Text>
         <Text style={styles.matchText}>{track.contexts.join(' + ')}</Text>
         {track.sourceLinks?.[0]?.context ? (
@@ -157,6 +157,7 @@ function FeaturedPreview({
           <Text style={styles.contextText}>{track.culturalContext}</Text>
         </View>
       ) : null}
+      {track.technicalProfile ? <TechnicalProfile profile={track.technicalProfile} /> : null}
       <SourceLink track={track} />
     </View>
   );
@@ -192,7 +193,11 @@ function RecommendationCard({ track }: { track: RecommendationTrack }) {
           <Text style={styles.duration}>{formatDuration(track.durationMs)}</Text>
         </View>
         <View style={styles.tags}>
-          <Text style={styles.tag}>{track.genre}</Text>
+          {(track.styleTags ?? [{ tag: track.genre, weight: 1 }]).slice(0, 4).map((styleTag) => (
+            <Text key={styleTag.tag} style={styles.tag}>
+              {styleTag.tag} {formatWeight(styleTag.weight)}
+            </Text>
+          ))}
           {track.contexts.map((context) => (
             <Text key={context} style={styles.tagMuted}>
               {context}
@@ -214,6 +219,7 @@ function RecommendationCard({ track }: { track: RecommendationTrack }) {
             <Text style={styles.contextText}>{track.culturalContext}</Text>
           </View>
         ) : null}
+        {track.technicalProfile ? <TechnicalProfile profile={track.technicalProfile} /> : null}
         <SourceLink track={track} compact />
       </View>
     </View>
@@ -249,6 +255,33 @@ function SourceLink({ track, compact = false }: { track: RecommendationTrack; co
   );
 }
 
+function TechnicalProfile({ profile }: { profile: NonNullable<RecommendationTrack['technicalProfile']> }) {
+  const items = [
+    profile.bpmRange ? `BPM ${profile.bpmRange}` : null,
+    profile.kickPressure ? `Kick ${profile.kickPressure}` : null,
+    profile.dropDensity ? `Drops ${profile.dropDensity}` : null,
+    profile.melodicLift ? `Lift ${profile.melodicLift}` : null,
+    ...(profile.legacySignals ?? []),
+  ].filter((item): item is string => Boolean(item));
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <View style={styles.technicalBox}>
+      <Text style={styles.technicalLabel}>Technical read</Text>
+      <View style={styles.technicalChips}>
+        {items.map((item) => (
+          <Text key={item} style={styles.technicalChip}>
+            {item}
+          </Text>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 function formatProvider(provider: string) {
   if (provider === 'youtube') {
     return 'YouTube source';
@@ -270,6 +303,16 @@ function formatSourceKind(kind?: string) {
     .split('-')
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(' ');
+}
+
+function formatWeightedTags(tags: RecommendationTrack['styleTags'], fallback: string) {
+  const primaryTags = tags?.slice(0, 3).map((tag) => tag.tag) ?? [fallback];
+
+  return primaryTags.join(' + ');
+}
+
+function formatWeight(weight: number) {
+  return weight < 1 ? `${Math.round(weight * 100)}%` : '';
 }
 
 function DimensionBar({ label, value }: { label: string; value: number }) {
@@ -598,6 +641,36 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontSize: 13,
     lineHeight: 19,
+  },
+  technicalBox: {
+    backgroundColor: '#071018',
+    borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 8,
+    padding: 10,
+  },
+  technicalLabel: {
+    color: colors.secondary,
+    fontSize: 12,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  technicalChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 7,
+  },
+  technicalChip: {
+    backgroundColor: '#0D141D',
+    borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: '800',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
   },
   matchStrip: {
     alignItems: 'center',

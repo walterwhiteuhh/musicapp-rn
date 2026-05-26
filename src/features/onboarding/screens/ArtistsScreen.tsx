@@ -117,12 +117,15 @@ function ArtistCard({
 function getArtistVisual(artist: string): ArtistVisual {
   const visuals: Record<string, ArtistVisual> = {
     'Charlotte de Witte': visual('#0B1018', '#A78BFA', '#38BDF8', 'Belgian peak-time'),
+    'Lilly Palmer': visual('#160B12', '#FB7185', '#FBBF24', 'Hard techno pressure'),
     'Amelie Lens': visual('#111827', '#FB7185', '#2DD4BF', 'Belgian peak-time'),
     'Miss Monique': visual('#07151A', '#22D3EE', '#A78BFA', 'Melodic progressive'),
     'Indira Paganotto': visual('#130B1D', '#F472B6', '#FBBF24', 'Psy / techno pressure'),
     Alignment: visual('#111020', '#A78BFA', '#FB7185', 'Rave pressure'),
     '999999999': visual('#150C0C', '#FB7185', '#FBBF24', 'Acid pressure'),
     'Reinier Zonneveld': visual('#100F0B', '#FBBF24', '#FB7185', 'Acid techno'),
+    'Armin van Buuren': visual('#07111D', '#38BDF8', '#A78BFA', 'Trance legacy'),
+    Tiesto: visual('#101018', '#A78BFA', '#FBBF24', 'Mainstage legacy'),
     ANNA: visual('#081315', '#2DD4BF', '#A78BFA', 'Techno / acid'),
     'Boris Brejcha': visual('#171018', '#F97316', '#2DD4BF', 'High-tech minimal'),
     'Ann Clue': visual('#171018', '#F97316', '#A78BFA', 'High-tech minimal'),

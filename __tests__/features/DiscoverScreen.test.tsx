@@ -80,4 +80,40 @@ describe('DiscoverScreen', () => {
 
     expect(await screen.findByText('Live above Cappadocia')).toBeTruthy();
   });
+
+  it('shows radio-show source and technical read for hard-techno profiles', async () => {
+    await AsyncStorage.setItem(
+      tasteProfileStorageKey,
+      JSON.stringify({
+        schemaVersion: 1,
+        genres: ['Hard Techno', 'Trance Revival'],
+        contexts: ['Club', 'Training'],
+        dimensions: {
+          energy: 88,
+          density: 78,
+          texture: 70,
+          space: 34,
+          rhythm: 46,
+        },
+        suggestedArtists: ['Lilly Palmer', 'Armin van Buuren', 'Tiesto'],
+        selectedArtists: ['Lilly Palmer'],
+        calibration: {
+          onboardingWeight: 1,
+          behaviorWeight: 0,
+          confidence: 0,
+          interactionCount: 0,
+        },
+        completedAt: '2026-05-26T10:00:00.000Z',
+        updatedAt: '2026-05-26T10:00:00.000Z',
+      }),
+    );
+
+    render(<DiscoverScreen />);
+
+    expect(await screen.findByText('Spannung Radio Show 054')).toBeTruthy();
+    expect(screen.getByText(/Hard Techno.*Peak-time Techno.*Trance Revival/)).toBeTruthy();
+    expect(screen.getByText('Open SoundCloud radio show')).toBeTruthy();
+    expect(screen.getByText('Technical read')).toBeTruthy();
+    expect(screen.getByText('mainstage pressure')).toBeTruthy();
+  });
 });

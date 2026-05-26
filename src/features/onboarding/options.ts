@@ -23,7 +23,9 @@ export const electronicGenres = [
 
 export const lineageOptions = [
   'Belgian peak-time techno',
+  'hard techno / hard dance crossover',
   'modern acid / trance pressure',
+  'mainstage trance legacy',
   'melodic techno / progressive',
   'high-tech minimal',
   'hardgroove',
@@ -77,6 +79,7 @@ type ArtistRule = {
   cluster:
     | 'belgian-peak-time'
     | 'melodic-progressive'
+    | 'hardtechno-mainstage'
     | 'high-tech-minimal'
     | 'hardgroove'
     | 'trance-revival'
@@ -102,6 +105,15 @@ const artistRules: ArtistRule[] = [
     dimension: 'energy',
     min: 60,
     gatewayScore: 1,
+  },
+  {
+    artist: 'Lilly Palmer',
+    cluster: 'hardtechno-mainstage',
+    genres: ['Hard Techno', 'Peak-time Techno', 'Trance Revival'],
+    contexts: ['Club', 'Training', 'Afterhours'],
+    dimension: 'energy',
+    min: 68,
+    gatewayScore: 0.94,
   },
   {
     artist: 'Amelie Lens',
@@ -150,12 +162,30 @@ const artistRules: ArtistRule[] = [
   },
   {
     artist: 'Reinier Zonneveld',
-    cluster: 'belgian-peak-time',
+    cluster: 'hardtechno-mainstage',
     genres: ['Peak-time Techno', 'Acid Techno', 'Hard Techno'],
     contexts: ['Club', 'Training'],
     dimension: 'energy',
     min: 70,
     gatewayScore: 0.82,
+  },
+  {
+    artist: 'Armin van Buuren',
+    cluster: 'hardtechno-mainstage',
+    genres: ['Trance Revival'],
+    contexts: ['Club'],
+    dimension: 'space',
+    min: 45,
+    gatewayScore: 0.7,
+  },
+  {
+    artist: 'Tiesto',
+    cluster: 'hardtechno-mainstage',
+    genres: ['Trance Revival'],
+    contexts: ['Club'],
+    dimension: 'energy',
+    min: 55,
+    gatewayScore: 0.68,
   },
   {
     artist: 'ANNA',
@@ -540,9 +570,13 @@ export function deriveArtistAnchorWeights(selectedArtists: string[]): Record<str
 
 const genreLineages: Record<string, string[]> = {
   'Peak-time Techno': ['Belgian peak-time techno', 'modern acid / trance pressure'],
-  'Hard Techno': ['Belgian peak-time techno', 'modern acid / trance pressure'],
+  'Hard Techno': [
+    'hard techno / hard dance crossover',
+    'modern acid / trance pressure',
+    'mainstage trance legacy',
+  ],
   'Acid Techno': ['modern acid / trance pressure', 'early trance / rave'],
-  'Trance Revival': ['early trance / rave', 'modern acid / trance pressure'],
+  'Trance Revival': ['early trance / rave', 'modern acid / trance pressure', 'mainstage trance legacy'],
   'Melodic Techno': ['melodic techno / progressive'],
   'Progressive House': ['melodic techno / progressive'],
   'High-tech Minimal': ['high-tech minimal'],
@@ -566,9 +600,13 @@ function selectedGenreClusters(genres: string[]): ArtistRule['cluster'][] {
   return Array.from(
     new Set(
       genres.flatMap((genre) => {
-        if (['Peak-time Techno', 'Hard Techno', 'Acid Techno'].includes(genre)) {
-          return ['belgian-peak-time'] as ArtistRule['cluster'][];
-        }
+    if (['Peak-time Techno', 'Acid Techno'].includes(genre)) {
+      return ['belgian-peak-time'] as ArtistRule['cluster'][];
+    }
+
+    if (genre === 'Hard Techno') {
+      return ['hardtechno-mainstage', 'belgian-peak-time'] as ArtistRule['cluster'][];
+    }
 
         if (['Melodic Techno', 'Progressive House', 'House'].includes(genre)) {
           return ['melodic-progressive'] as ArtistRule['cluster'][];
@@ -583,7 +621,7 @@ function selectedGenreClusters(genres: string[]): ArtistRule['cluster'][] {
         }
 
         if (genre === 'Trance Revival') {
-          return ['trance-revival', 'belgian-peak-time'] as ArtistRule['cluster'][];
+          return ['trance-revival', 'hardtechno-mainstage', 'belgian-peak-time'] as ArtistRule['cluster'][];
         }
 
         if (['Hypnotic Techno', 'Dub Techno'].includes(genre)) {
@@ -611,6 +649,11 @@ function clusterLineageScore(
   const lineageByCluster: Record<ArtistRule['cluster'], string[]> = {
     'belgian-peak-time': ['Belgian peak-time techno', 'modern acid / trance pressure'],
     'melodic-progressive': ['melodic techno / progressive'],
+    'hardtechno-mainstage': [
+      'hard techno / hard dance crossover',
+      'modern acid / trance pressure',
+      'mainstage trance legacy',
+    ],
     'high-tech-minimal': ['high-tech minimal'],
     hardgroove: ['hardgroove'],
     'trance-revival': ['early trance / rave', 'modern acid / trance pressure'],
