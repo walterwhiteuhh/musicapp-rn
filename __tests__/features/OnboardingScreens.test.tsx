@@ -94,6 +94,7 @@ describe('Onboarding screens', () => {
     expect(mockPush).not.toHaveBeenCalled();
 
     fireEvent.press(await screen.findByText('Boris Brejcha'));
+    expect(screen.getByText('High-tech minimal')).toBeTruthy();
     fireEvent.press(screen.getByText('Review profile'));
 
     expect(mockPush).toHaveBeenCalledWith('/onboarding/review');
