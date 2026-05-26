@@ -73,11 +73,15 @@ function RecommendationCard({ track }: { track: RecommendationTrack }) {
         </View>
         <View style={styles.tags}>
           <Text style={styles.tag}>{track.genre}</Text>
-          <Text style={styles.tag}>{track.mood}</Text>
+          <Text style={styles.tag}>{track.contexts[0]}</Text>
         </View>
         <View style={styles.reasonBox}>
           <Text style={styles.reasonLabel}>Why recommended</Text>
           <Text style={styles.reasonText}>{track.reason}</Text>
+          <Text style={styles.reasonText}>
+            Energy {track.dimensions.energy} / Space {track.dimensions.space} / Rhythm{' '}
+            {track.dimensions.rhythm}
+          </Text>
         </View>
       </View>
     </Pressable>

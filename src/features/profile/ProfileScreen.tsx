@@ -35,8 +35,18 @@ export function ProfileScreen() {
           {profile?.completedAt ? (
             <>
               <ProfileRow label="Genres" value={profile.genres.join(', ')} />
-              <ProfileRow label="Moods" value={profile.moods.join(', ')} />
-              <ProfileRow label="Artists" value={profile.artists.join(', ')} />
+              <ProfileRow label="Contexts" value={profile.contexts.join(', ')} />
+              <ProfileRow label="Artists" value={profile.selectedArtists.join(', ')} />
+              <ProfileRow
+                label="Calibration"
+                value={`Onboarding ${Math.round(
+                  profile.calibration.onboardingWeight * 100,
+                )}% / behavior ${Math.round(profile.calibration.behaviorWeight * 100)}%`}
+              />
+              <ProfileRow
+                label="Dimensions"
+                value={`Energy ${profile.dimensions.energy}, density ${profile.dimensions.density}, texture ${profile.dimensions.texture}, space ${profile.dimensions.space}, rhythm ${profile.dimensions.rhythm}`}
+              />
               <ActionButton variant="secondary" onPress={resetProfile}>
                 Edit taste profile
               </ActionButton>

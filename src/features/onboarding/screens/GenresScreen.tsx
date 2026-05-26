@@ -14,8 +14,8 @@ export function GenresScreen() {
   return (
     <OnboardingScaffold
       eyebrow="Step 1 of 4"
-      title="Pick at least two electronic directions."
-      description="This keeps the first recommendation model narrow enough to reason about later."
+      title="Pick two to four electronic scenes."
+      description="Genres are only the first filter. Keeping this tight makes later recommendations easier to explain."
     >
       <View style={styles.grid}>
         {electronicGenres.map((genre) => (
@@ -30,7 +30,7 @@ export function GenresScreen() {
       <View style={styles.actions}>
         <ActionButton
           disabled={!validation.canContinueGenres}
-          onPress={() => router.push('/onboarding/moods' as never)}
+          onPress={() => router.push('/onboarding/dimensions' as never)}
         >
           Next
         </ActionButton>

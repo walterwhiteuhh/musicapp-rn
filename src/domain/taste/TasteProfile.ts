@@ -1,52 +1,174 @@
-export type TasteProfile = {
-  genres: string[];
-  moods: string[];
-  artists: string[];
-  completedAt: string | null;
+export type ListeningContext =
+  | 'Club'
+  | 'Headphones'
+  | 'Focus'
+  | 'Night drive'
+  | 'Training'
+  | 'Afterhours'
+  | 'Home';
+
+export type TrackDimensions = {
+  energy: number;
+  density: number;
+  texture: number;
+  space: number;
+  rhythm: number;
 };
 
-export type TasteProfileDraft = Omit<TasteProfile, 'completedAt'>;
+export type RecommendationCalibration = {
+  onboardingWeight: number;
+  behaviorWeight: number;
+  confidence: number;
+  interactionCount: number;
+};
+
+export type TasteProfile = {
+  schemaVersion: 1;
+  genres: string[];
+  contexts: ListeningContext[];
+  dimensions: TrackDimensions;
+  suggestedArtists: string[];
+  selectedArtists: string[];
+  calibration: RecommendationCalibration;
+  completedAt: string | null;
+  updatedAt: string;
+};
+
+export type TasteProfileDraft = {
+  genres: string[];
+  contexts: ListeningContext[];
+  dimensions: TrackDimensions;
+  suggestedArtists: string[];
+  selectedArtists: string[];
+};
 
 export type TasteProfileValidation = {
   canContinueGenres: boolean;
-  canContinueMoods: boolean;
+  canContinueDimensions: boolean;
+  canContinueContexts: boolean;
   canContinueArtists: boolean;
   canComplete: boolean;
 };
 
-export const emptyTasteProfile: TasteProfile = {
+export const defaultTrackDimensions: TrackDimensions = {
+  energy: 55,
+  density: 45,
+  texture: 50,
+  space: 60,
+  rhythm: 45,
+};
+
+export const emptyTasteProfileDraft: TasteProfileDraft = {
   genres: [],
-  moods: [],
-  artists: [],
-  completedAt: null,
+  contexts: [],
+  dimensions: defaultTrackDimensions,
+  suggestedArtists: [],
+  selectedArtists: [],
 };
 
 export const minimumTasteProfile = {
   genres: 2,
-  moods: 1,
-  artists: 1,
+  contexts: 1,
+  selectedArtists: 1,
+};
+
+export const maximumTasteProfile = {
+  genres: 4,
+  contexts: 3,
+  selectedArtists: 5,
+};
+
+export const initialRecommendationCalibration: RecommendationCalibration = {
+  onboardingWeight: 1,
+  behaviorWeight: 0,
+  confidence: 0,
+  interactionCount: 0,
 };
 
 export function validateTasteProfile(profile: TasteProfileDraft): TasteProfileValidation {
-  const canContinueGenres = profile.genres.length >= minimumTasteProfile.genres;
-  const canContinueMoods = profile.moods.length >= minimumTasteProfile.moods;
-  const canContinueArtists = profile.artists.length >= minimumTasteProfile.artists;
+  const canContinueGenres =
+    profile.genres.length >= minimumTasteProfile.genres &&
+    profile.genres.length <= maximumTasteProfile.genres;
+  const canContinueDimensions = Object.values(profile.dimensions).every(
+    (value) => value >= 0 && value <= 100,
+  );
+  const canContinueContexts =
+    profile.contexts.length >= minimumTasteProfile.contexts &&
+    profile.contexts.length <= maximumTasteProfile.contexts;
+  const canContinueArtists =
+    profile.selectedArtists.length >= minimumTasteProfile.selectedArtists &&
+    profile.selectedArtists.length <= maximumTasteProfile.selectedArtists;
 
   return {
     canContinueGenres,
-    canContinueMoods,
+    canContinueDimensions,
+    canContinueContexts,
     canContinueArtists,
-    canComplete: canContinueGenres && canContinueMoods && canContinueArtists,
+    canComplete:
+      canContinueGenres && canContinueDimensions && canContinueContexts && canContinueArtists,
   };
 }
 
-export function toggleTasteValue(values: string[], value: string): string[] {
-  return values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
+export function toggleLimitedValue<T extends string>(
+  values: T[],
+  value: T,
+  maxValues: number,
+): T[] {
+  if (values.includes(value)) {
+    return values.filter((item) => item !== value);
+  }
+
+  if (values.length >= maxValues) {
+    return values;
+  }
+
+  return [...values, value];
 }
 
-export function completeTasteProfile(profile: TasteProfileDraft, completedAt = new Date()): TasteProfile {
+export function updateTrackDimension(
+  dimensions: TrackDimensions,
+  dimension: keyof TrackDimensions,
+  value: number,
+): TrackDimensions {
   return {
-    ...profile,
-    completedAt: completedAt.toISOString(),
+    ...dimensions,
+    [dimension]: clampDimension(value),
   };
+}
+
+export function completeTasteProfile(
+  profile: TasteProfileDraft,
+  completedAt = new Date(),
+): TasteProfile {
+  const timestamp = completedAt.toISOString();
+
+  return {
+    schemaVersion: 1,
+    ...profile,
+    calibration: initialRecommendationCalibration,
+    completedAt: timestamp,
+    updatedAt: timestamp,
+  };
+}
+
+export function deriveRecommendationCalibration(interactionCount: number): RecommendationCalibration {
+  const normalizedInteractionCount = Math.max(0, Math.floor(interactionCount));
+  const onboardingWeight = roundWeight(Math.max(0.2, 1 - normalizedInteractionCount / 100));
+  const behaviorWeight = roundWeight(1 - onboardingWeight);
+  const confidence = roundWeight(Math.min(1, normalizedInteractionCount / 100));
+
+  return {
+    onboardingWeight,
+    behaviorWeight,
+    confidence,
+    interactionCount: normalizedInteractionCount,
+  };
+}
+
+function clampDimension(value: number): number {
+  return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function roundWeight(value: number): number {
+  return Math.round(value * 100) / 100;
 }

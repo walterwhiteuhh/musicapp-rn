@@ -2,20 +2,27 @@ import { createContext, useContext, useMemo, useState, type PropsWithChildren } 
 
 import {
   completeTasteProfile,
-  emptyTasteProfile,
-  toggleTasteValue,
+  emptyTasteProfileDraft,
+  maximumTasteProfile,
+  toggleLimitedValue,
+  updateTrackDimension,
   validateTasteProfile,
+  type ListeningContext,
   type TasteProfile,
   type TasteProfileDraft,
   type TasteProfileValidation,
+  type TrackDimensions,
 } from '@/domain/taste/TasteProfile';
+import { deriveArtistSuggestions } from './options';
 
 type OnboardingContextValue = {
   draft: TasteProfileDraft;
   validation: TasteProfileValidation;
   toggleGenre(genre: string): void;
-  toggleMood(mood: string): void;
-  toggleArtist(artist: string): void;
+  toggleContext(context: ListeningContext): void;
+  setDimension(dimension: keyof TrackDimensions, value: number): void;
+  refreshArtistSuggestions(): void;
+  toggleSelectedArtist(artist: string): void;
   complete(): TasteProfile;
   reset(): void;
 };
@@ -27,13 +34,7 @@ type OnboardingProviderProps = PropsWithChildren<{
 }>;
 
 export function OnboardingProvider({ children, initialDraft }: OnboardingProviderProps) {
-  const [draft, setDraft] = useState<TasteProfileDraft>(
-    initialDraft ?? {
-      genres: emptyTasteProfile.genres,
-      moods: emptyTasteProfile.moods,
-      artists: emptyTasteProfile.artists,
-    },
-  );
+  const [draft, setDraft] = useState<TasteProfileDraft>(initialDraft ?? emptyTasteProfileDraft);
 
   const value = useMemo<OnboardingContextValue>(() => {
     return {
@@ -42,28 +43,47 @@ export function OnboardingProvider({ children, initialDraft }: OnboardingProvide
       toggleGenre: (genre) => {
         setDraft((current) => ({
           ...current,
-          genres: toggleTasteValue(current.genres, genre),
+          genres: toggleLimitedValue(current.genres, genre, maximumTasteProfile.genres),
         }));
       },
-      toggleMood: (mood) => {
+      toggleContext: (context) => {
         setDraft((current) => ({
           ...current,
-          moods: toggleTasteValue(current.moods, mood),
+          contexts: toggleLimitedValue(current.contexts, context, maximumTasteProfile.contexts),
         }));
       },
-      toggleArtist: (artist) => {
+      setDimension: (dimension, dimensionValue) => {
         setDraft((current) => ({
           ...current,
-          artists: toggleTasteValue(current.artists, artist),
+          dimensions: updateTrackDimension(current.dimensions, dimension, dimensionValue),
+        }));
+      },
+      refreshArtistSuggestions: () => {
+        setDraft((current) => {
+          const suggestedArtists = deriveArtistSuggestions(current);
+
+          return {
+            ...current,
+            suggestedArtists,
+            selectedArtists: current.selectedArtists.filter((artist) =>
+              suggestedArtists.includes(artist),
+            ),
+          };
+        });
+      },
+      toggleSelectedArtist: (artist) => {
+        setDraft((current) => ({
+          ...current,
+          selectedArtists: toggleLimitedValue(
+            current.selectedArtists,
+            artist,
+            maximumTasteProfile.selectedArtists,
+          ),
         }));
       },
       complete: () => completeTasteProfile(draft),
       reset: () => {
-        setDraft({
-          genres: [],
-          moods: [],
-          artists: [],
-        });
+        setDraft(emptyTasteProfileDraft);
       },
     };
   }, [draft]);

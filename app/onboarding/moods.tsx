@@ -1,5 +1,5 @@
-import { MoodsScreen } from '@/features/onboarding/screens/MoodsScreen';
+import { Redirect } from 'expo-router';
 
 export default function MoodsRoute() {
-  return <MoodsScreen />;
+  return <Redirect href={'/onboarding/dimensions' as never} />;
 }

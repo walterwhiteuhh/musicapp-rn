@@ -4,7 +4,9 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { ActionButton } from '@/components/ActionButton';
 import { AsyncStorageTasteProfileRepository } from '@/data/taste/AsyncStorageTasteProfileRepository';
+import { initialRecommendationCalibration } from '@/domain/taste/TasteProfile';
 import { OnboardingScaffold } from '@/features/onboarding/components/OnboardingScaffold';
+import { dimensionCopy } from '@/features/onboarding/options';
 import { useOnboarding } from '@/features/onboarding/OnboardingContext';
 import { colors } from '@/theme/colors';
 
@@ -29,25 +31,42 @@ export function ReviewScreen() {
 
   return (
     <OnboardingScaffold
-      eyebrow="Step 4 of 4"
-      title="Review the signal before discovery starts."
-      description="You can refine this later from Profile. The first feed is still local and transparent."
+      eyebrow="Step 5 of 5"
+      title="Your initial Klangprofil is ready."
+      description="This is the starting model. It begins at 100% weight, then behavior events gradually take over."
     >
       <View style={styles.summaryCard}>
         <SummaryRow label="Genres" value={draft.genres.join(', ')} />
-        <SummaryRow label="Moods" value={draft.moods.join(', ')} />
-        <SummaryRow label="Artists" value={draft.artists.join(', ')} />
+        <SummaryRow label="Contexts" value={draft.contexts.join(', ')} />
+        <SummaryRow label="Reference artists" value={draft.selectedArtists.join(', ')} />
+      </View>
+      <View style={styles.dimensionCard}>
+        {Object.entries(draft.dimensions).map(([key, value]) => (
+          <View key={key} style={styles.dimensionRow}>
+            <Text style={styles.dimensionLabel}>
+              {dimensionCopy[key as keyof typeof dimensionCopy].label}
+            </Text>
+            <View style={styles.dimensionTrack}>
+              <View style={[styles.dimensionFill, { width: `${value}%` }]} />
+            </View>
+            <Text style={styles.dimensionValue}>{value}</Text>
+          </View>
+        ))}
       </View>
       <View style={styles.infoCard}>
+        <Text style={styles.infoTitle}>Initial weighting</Text>
         <Text style={styles.infoText}>
-          Klangfeld will use these selections to rank electronic demo tracks and explain why each
-          one appears.
+          Onboarding {Math.round(initialRecommendationCalibration.onboardingWeight * 100)}% /
+          behavior {Math.round(initialRecommendationCalibration.behaviorWeight * 100)}%.
+          Listening events will lower onboarding influence over time, but keep it as a profile
+          anchor.
         </Text>
       </View>
       <View style={styles.actions}>
         <ActionButton disabled={!validation.canComplete || isSaving} onPress={handleComplete}>
-          {isSaving ? <ActivityIndicator color="#06110F" /> : 'Start discovery'}
+          {isSaving ? 'Saving...' : 'Start discovery'}
         </ActionButton>
+        {isSaving && <ActivityIndicator color={colors.primary} />}
         <ActionButton variant="ghost" onPress={() => router.back()}>
           Back
         </ActionButton>
@@ -88,12 +107,56 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
   },
+  dimensionCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 12,
+    padding: 16,
+  },
+  dimensionRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+  },
+  dimensionLabel: {
+    color: colors.text,
+    fontSize: 13,
+    fontWeight: '800',
+    width: 72,
+  },
+  dimensionTrack: {
+    backgroundColor: colors.elevated,
+    borderRadius: 8,
+    flex: 1,
+    height: 8,
+    overflow: 'hidden',
+  },
+  dimensionFill: {
+    backgroundColor: colors.primary,
+    height: 8,
+  },
+  dimensionValue: {
+    color: colors.muted,
+    fontSize: 13,
+    fontWeight: '800',
+    textAlign: 'right',
+    width: 30,
+  },
   infoCard: {
     backgroundColor: colors.elevated,
     borderColor: colors.border,
     borderRadius: 8,
     borderWidth: 1,
+    gap: 6,
     padding: 16,
+  },
+  infoTitle: {
+    color: colors.secondary,
+    fontSize: 13,
+    fontWeight: '800',
+    textTransform: 'uppercase',
   },
   infoText: {
     color: colors.muted,

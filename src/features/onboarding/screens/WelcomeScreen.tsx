@@ -11,19 +11,19 @@ export function WelcomeScreen() {
   return (
     <OnboardingScaffold
       eyebrow="Klangfeld"
-      title="Electronic music discovery that starts with your taste."
-      description="Create a lightweight profile from genres, moods, and artists. Klangfeld uses it to shape transparent demo recommendations while the live SoundCloud path is prepared."
+      title="Build a signal profile, not a playlist questionnaire."
+      description="Klangfeld starts with a compact map of genres, listening context, and track dimensions. Later, real listening behavior slowly takes over from this onboarding signal."
     >
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Iteration 2 focus</Text>
-        <Text style={styles.cardText}>Mobile and tablet first layout</Text>
-        <Text style={styles.cardText}>Web preview deployable on Netlify</Text>
-        <Text style={styles.cardText}>Electronic music data for later analysis</Text>
+        <Text style={styles.cardTitle}>What the profile captures</Text>
+        <Text style={styles.cardText}>Electronic genres as a narrow starting field</Text>
+        <Text style={styles.cardText}>Energy, density, texture, space, and rhythm</Text>
+        <Text style={styles.cardText}>Listening contexts that can become statistics later</Text>
       </View>
 
       <View style={styles.actions}>
         <ActionButton onPress={() => router.push('/onboarding/genres' as never)}>
-          Create taste profile
+          Build Klangprofil
         </ActionButton>
         <ActionButton variant="ghost" onPress={() => router.replace('/(tabs)' as never)}>
           Skip and use demo mode

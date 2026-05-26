@@ -2,12 +2,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { ReactElement } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
-import { OnboardingProvider } from '@/features/onboarding/OnboardingContext';
-import { GenresScreen } from '@/features/onboarding/screens/GenresScreen';
-import { WelcomeScreen } from '@/features/onboarding/screens/WelcomeScreen';
-import { ReviewScreen } from '@/features/onboarding/screens/ReviewScreen';
 import { tasteProfileStorageKey } from '@/data/taste/AsyncStorageTasteProfileRepository';
 import type { TasteProfileDraft } from '@/domain/taste/TasteProfile';
+import { OnboardingProvider } from '@/features/onboarding/OnboardingContext';
+import { ArtistsScreen } from '@/features/onboarding/screens/ArtistsScreen';
+import { ContextsScreen } from '@/features/onboarding/screens/ContextsScreen';
+import { GenresScreen } from '@/features/onboarding/screens/GenresScreen';
+import { ReviewScreen } from '@/features/onboarding/screens/ReviewScreen';
+import { WelcomeScreen } from '@/features/onboarding/screens/WelcomeScreen';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
@@ -25,6 +27,20 @@ function renderWithOnboarding(ui: ReactElement, initialDraft?: TasteProfileDraft
   return render(<OnboardingProvider initialDraft={initialDraft}>{ui}</OnboardingProvider>);
 }
 
+const completedDraft: TasteProfileDraft = {
+  genres: ['Techno', 'Dub Techno'],
+  contexts: ['Club'],
+  dimensions: {
+    energy: 70,
+    density: 45,
+    texture: 55,
+    space: 60,
+    rhythm: 35,
+  },
+  suggestedArtists: ['Ben Klock', 'Deepchord', 'Vril'],
+  selectedArtists: ['Ben Klock'],
+};
+
 describe('Onboarding screens', () => {
   beforeEach(async () => {
     mockPush.mockClear();
@@ -36,7 +52,7 @@ describe('Onboarding screens', () => {
   it('starts the onboarding flow from welcome', () => {
     renderWithOnboarding(<WelcomeScreen />);
 
-    fireEvent.press(screen.getByText('Create taste profile'));
+    fireEvent.press(screen.getByText('Build Klangprofil'));
 
     expect(mockPush).toHaveBeenCalledWith('/onboarding/genres');
   });
@@ -51,21 +67,48 @@ describe('Onboarding screens', () => {
     fireEvent.press(screen.getByText('House'));
     fireEvent.press(screen.getByText('Next'));
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/moods');
+    expect(mockPush).toHaveBeenCalledWith('/onboarding/dimensions');
   });
 
-  it('saves a completed profile from review', async () => {
-    renderWithOnboarding(<ReviewScreen />, {
-      genres: ['Techno', 'House'],
-      moods: ['Hypnotic'],
-      artists: ['Skee Mask'],
+  it('derives artist suggestions from context before artist selection', async () => {
+    renderWithOnboarding(<ContextsScreen />, {
+      ...completedDraft,
+      contexts: [],
+      suggestedArtists: [],
+      selectedArtists: [],
     });
 
-    await screen.findByText('Skee Mask');
+    fireEvent.press(screen.getByText('Club'));
+    fireEvent.press(screen.getByText('Derive artists'));
+
+    expect(mockPush).toHaveBeenCalledWith('/onboarding/artists');
+  });
+
+  it('requires one selected artist from derived suggestions', async () => {
+    renderWithOnboarding(<ArtistsScreen />, {
+      ...completedDraft,
+      selectedArtists: [],
+    });
+
+    fireEvent.press(screen.getByText('Review profile'));
+    expect(mockPush).not.toHaveBeenCalled();
+
+    fireEvent.press(await screen.findByText('Ben Klock'));
+    fireEvent.press(screen.getByText('Review profile'));
+
+    expect(mockPush).toHaveBeenCalledWith('/onboarding/review');
+  });
+
+  it('saves a completed versioned profile from review', async () => {
+    renderWithOnboarding(<ReviewScreen />, completedDraft);
+
+    await screen.findByText('Ben Klock');
     fireEvent.press(screen.getByText('Start discovery'));
 
     await waitFor(async () => {
-      await expect(AsyncStorage.getItem(tasteProfileStorageKey)).resolves.toContain('Skee Mask');
+      await expect(AsyncStorage.getItem(tasteProfileStorageKey)).resolves.toContain(
+        '"schemaVersion":1',
+      );
     });
     expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
   });

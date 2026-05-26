@@ -7,10 +7,26 @@ import {
 import type { TasteProfile } from '@/domain/taste/TasteProfile';
 
 const profile: TasteProfile = {
+  schemaVersion: 1,
   genres: ['Techno', 'Ambient'],
-  moods: ['Hypnotic'],
-  artists: ['Skee Mask'],
+  contexts: ['Club', 'Headphones'],
+  dimensions: {
+    energy: 65,
+    density: 45,
+    texture: 55,
+    space: 70,
+    rhythm: 40,
+  },
+  suggestedArtists: ['Ben Klock', 'Jon Hopkins'],
+  selectedArtists: ['Ben Klock'],
+  calibration: {
+    onboardingWeight: 1,
+    behaviorWeight: 0,
+    confidence: 0,
+    interactionCount: 0,
+  },
   completedAt: '2026-05-26T10:00:00.000Z',
+  updatedAt: '2026-05-26T10:00:00.000Z',
 };
 
 describe('AsyncStorageTasteProfileRepository', () => {
@@ -19,7 +35,7 @@ describe('AsyncStorageTasteProfileRepository', () => {
     jest.clearAllMocks();
   });
 
-  it('saves and loads a taste profile', async () => {
+  it('saves and loads a versioned taste profile', async () => {
     const repository = new AsyncStorageTasteProfileRepository();
 
     await repository.saveProfile(profile);
@@ -31,7 +47,7 @@ describe('AsyncStorageTasteProfileRepository', () => {
     await expect(repository.getProfile()).resolves.toEqual(profile);
   });
 
-  it('returns null for malformed stored profile data', async () => {
+  it('returns null for malformed or old profile data', async () => {
     await AsyncStorage.setItem(tasteProfileStorageKey, JSON.stringify({ genres: ['Techno'] }));
 
     const repository = new AsyncStorageTasteProfileRepository();

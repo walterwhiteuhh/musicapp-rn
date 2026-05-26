@@ -1,4 +1,4 @@
-import type { TasteProfile } from '@/domain/taste/TasteProfile';
+import type { TasteProfile, TrackDimensions } from '@/domain/taste/TasteProfile';
 import type { RecommendationTrack } from './RecommendationTrack';
 
 export function filterRecommendations(
@@ -9,13 +9,34 @@ export function filterRecommendations(
     return tracks;
   }
 
-  const genreMatches = new Set(profile.genres.map((genre) => genre.toLowerCase()));
-  const moodMatches = new Set(profile.moods.map((mood) => mood.toLowerCase()));
-  const filteredTracks = tracks.filter((track) => {
-    return (
-      genreMatches.has(track.genre.toLowerCase()) || moodMatches.has(track.mood.toLowerCase())
-    );
-  });
+  const scoredTracks = tracks.map((track) => ({
+    track,
+    score: scoreRecommendation(track, profile),
+  }));
+  const matchingTracks = scoredTracks
+    .filter((entry) => entry.score > 0)
+    .sort((left, right) => right.score - left.score)
+    .map((entry) => entry.track);
 
-  return filteredTracks.length > 0 ? filteredTracks : tracks;
+  return matchingTracks.length > 0 ? matchingTracks : tracks;
+}
+
+function scoreRecommendation(track: RecommendationTrack, profile: TasteProfile): number {
+  let score = 0;
+
+  if (profile.genres.includes(track.genre)) {
+    score += 4;
+  }
+
+  score += track.contexts.filter((context) => profile.contexts.includes(context)).length * 2;
+  score += Math.max(0, 4 - dimensionDistance(track.dimensions, profile.dimensions) / 25);
+
+  return score;
+}
+
+function dimensionDistance(left: TrackDimensions, right: TrackDimensions): number {
+  const keys: (keyof TrackDimensions)[] = ['energy', 'density', 'texture', 'space', 'rhythm'];
+  const totalDistance = keys.reduce((sum, key) => sum + Math.abs(left[key] - right[key]), 0);
+
+  return totalDistance / keys.length;
 }
