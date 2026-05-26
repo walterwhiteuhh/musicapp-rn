@@ -4,25 +4,74 @@ import { useRouter } from 'expo-router';
 
 import { ActionButton } from '@/components/ActionButton';
 import { ScreenContainer } from '@/components/ScreenContainer';
+import { appConfig } from '@/config/appConfig';
+import { HttpProfileTagsProvider } from '@/data/profileTags';
 import { AsyncStorageTasteProfileRepository } from '@/data/taste/AsyncStorageTasteProfileRepository';
+import type { ProfileTagSummary, ProfileTagsProvider } from '@/domain/profileTags';
 import type { TasteProfile } from '@/domain/taste/TasteProfile';
 import { colors, palettes, type DesignPaletteId } from '@/theme/colors';
 import { useThemePalette } from '@/theme/ThemeContext';
 
 const repository = new AsyncStorageTasteProfileRepository();
+const defaultProfileTagsProvider = new HttpProfileTagsProvider({
+  endpoint: appConfig.profileTagsEndpoint,
+});
 
-export function ProfileScreen() {
+type ProfileScreenProps = {
+  profileTagsProvider?: ProfileTagsProvider;
+  aiProfileTagsEnabled?: boolean;
+};
+
+export function ProfileScreen({
+  profileTagsProvider = defaultProfileTagsProvider,
+  aiProfileTagsEnabled = appConfig.features.aiProfileTags,
+}: ProfileScreenProps = {}) {
   const router = useRouter();
   const [profile, setProfile] = useState<TasteProfile | null>(null);
+  const [tagSummary, setTagSummary] = useState<ProfileTagSummary | null>(null);
+  const [tagStatus, setTagStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const { palette, setPaletteId } = useThemePalette();
 
   useEffect(() => {
     void repository.getProfile().then(setProfile);
   }, []);
 
+  useEffect(() => {
+    if (!profile?.completedAt || !aiProfileTagsEnabled) {
+      return;
+    }
+
+    let active = true;
+    setTagStatus('loading');
+
+    void profileTagsProvider
+      .generateTags(profile)
+      .then((summary) => {
+        if (!active) {
+          return;
+        }
+
+        setTagSummary(summary);
+        setTagStatus('success');
+      })
+      .catch(() => {
+        if (!active) {
+          return;
+        }
+
+        setTagStatus('error');
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [aiProfileTagsEnabled, profile, profileTagsProvider]);
+
   const resetProfile = async () => {
     await repository.clearProfile();
     setProfile(null);
+    setTagSummary(null);
+    setTagStatus('idle');
     router.push('/onboarding/welcome' as never);
   };
 
@@ -62,6 +111,40 @@ export function ProfileScreen() {
             </>
           )}
         </View>
+        {profile?.completedAt && aiProfileTagsEnabled ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Klangprofil Analyse</Text>
+            {tagStatus === 'loading' ? (
+              <Text style={styles.bodyText}>Analysing profile tags...</Text>
+            ) : null}
+            {tagStatus === 'error' ? (
+              <Text style={styles.bodyText}>
+                AI analysis is currently unavailable. The local taste profile remains active.
+              </Text>
+            ) : null}
+            {tagStatus === 'success' && tagSummary ? (
+              <>
+                <ProfileRow label="Primary energy" value={tagSummary.primaryEnergy} />
+                <ProfileRow label="Rhythm bias" value={tagSummary.rhythmBias} />
+                <ProfileRow label="Intent" value={tagSummary.listeningIntent} />
+                <ProfileRow label="Discovery" value={tagSummary.discoveryVector.join(', ')} />
+                <ProfileRow label="Notes" value={tagSummary.profileNotes.join(', ')} />
+                <ProfileRow
+                  label="AI confidence"
+                  value={`${Math.round(tagSummary.confidence * 100)}%`}
+                />
+              </>
+            ) : null}
+          </View>
+        ) : null}
+        {profile?.completedAt && !aiProfileTagsEnabled ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Klangprofil Analyse</Text>
+            <Text style={styles.bodyText}>
+              AI profile tags are disabled for this build. Local profile data is still available.
+            </Text>
+          </View>
+        ) : null}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Play Store readiness</Text>
           <Text style={styles.bodyText}>
