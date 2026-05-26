@@ -1,4 +1,5 @@
 import type { TasteProfileDraft } from '@/domain/taste';
+import { createInitialDiscoveryDepth } from '@/domain/catalog';
 import { deriveArtistSuggestions } from '@/features/onboarding/options';
 
 const technoDraft: TasteProfileDraft = {
@@ -13,6 +14,9 @@ const technoDraft: TasteProfileDraft = {
   },
   suggestedArtists: [],
   selectedArtists: [],
+  lineageWeights: {},
+  artistAnchorWeights: {},
+  discoveryDepth: createInitialDiscoveryDepth(0),
 };
 
 describe('deriveArtistSuggestions', () => {

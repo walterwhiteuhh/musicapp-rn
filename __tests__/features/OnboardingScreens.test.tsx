@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 import { tasteProfileStorageKey } from '@/data/taste/AsyncStorageTasteProfileRepository';
+import { createInitialDiscoveryDepth } from '@/domain/catalog';
 import type { TasteProfileDraft } from '@/domain/taste/TasteProfile';
 import { OnboardingProvider } from '@/features/onboarding/OnboardingContext';
 import { ArtistsScreen } from '@/features/onboarding/screens/ArtistsScreen';
@@ -39,6 +40,13 @@ const completedDraft: TasteProfileDraft = {
   },
   suggestedArtists: ['Boris Brejcha', 'Charlotte de Witte', 'Amelie Lens'],
   selectedArtists: ['Boris Brejcha'],
+  lineageWeights: {
+    'early trance / rave': 1,
+  },
+  artistAnchorWeights: {
+    'Boris Brejcha': 1,
+  },
+  discoveryDepth: createInitialDiscoveryDepth(0),
 };
 
 describe('Onboarding screens', () => {
@@ -111,6 +119,9 @@ describe('Onboarding screens', () => {
         '"schemaVersion":1',
       );
     });
+    await expect(AsyncStorage.getItem(tasteProfileStorageKey)).resolves.toContain(
+      '"lineageWeights"',
+    );
     expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
   });
 });

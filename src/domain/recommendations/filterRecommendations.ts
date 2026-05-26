@@ -1,4 +1,5 @@
 import type { TasteProfile, TrackDimensions } from '@/domain/taste/TasteProfile';
+import { createInitialDiscoveryDepth } from '@/domain/catalog';
 import type { RecommendationTrack } from './RecommendationTrack';
 
 export function filterRecommendations(
@@ -28,13 +29,18 @@ function scoreRecommendation(track: RecommendationTrack, profile: TasteProfile):
     score += 4;
   }
 
+  const lineageWeights = profile.lineageWeights ?? {};
+  const discoveryDepth = profile.discoveryDepth ?? createInitialDiscoveryDepth(0);
+
+  score += (lineageWeights[track.genreLineage ?? track.genre] ?? 0) * 4;
+
   if (profile.selectedArtists.includes(track.artistName)) {
-    score += 7;
+    score += 4 + discoveryDepth.recognitionBias / 25;
   }
 
   score +=
     (track.relatedArtists?.filter((artist) => profile.selectedArtists.includes(artist)).length ??
-      0) * 3;
+      0) * (2 + discoveryDepth.recognitionBias / 50);
 
   score += track.contexts.filter((context) => profile.contexts.includes(context)).length * 2;
   score += Math.max(0, 4 - dimensionDistance(track.dimensions, profile.dimensions) / 25);

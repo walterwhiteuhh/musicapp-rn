@@ -3,6 +3,7 @@ import {
   parseProfileTagSummary,
   type ProfileTagSummary,
 } from '@/domain/profileTags';
+import { createInitialDiscoveryDepth } from '@/domain/catalog';
 import type { TasteProfile } from '@/domain/taste';
 
 const profile: TasteProfile = {
@@ -18,6 +19,13 @@ const profile: TasteProfile = {
   },
   suggestedArtists: ['Ben Klock', 'Jon Hopkins'],
   selectedArtists: ['Ben Klock'],
+  lineageWeights: {
+    'Berlin hypnotic': 1,
+  },
+  artistAnchorWeights: {
+    'Ben Klock': 1,
+  },
+  discoveryDepth: createInitialDiscoveryDepth(0),
   calibration: {
     onboardingWeight: 1,
     behaviorWeight: 0,
@@ -38,6 +46,13 @@ describe('ProfileTagSummary', () => {
       contexts: ['Club', 'Focus'],
       dimensions: profile.dimensions,
       selectedArtists: ['Ben Klock'],
+      lineageWeights: {
+        'Berlin hypnotic': 1,
+      },
+      artistAnchorWeights: {
+        'Ben Klock': 1,
+      },
+      discoveryDepth: profile.discoveryDepth,
       calibration: profile.calibration,
     });
     expect(request).not.toHaveProperty('completedAt');

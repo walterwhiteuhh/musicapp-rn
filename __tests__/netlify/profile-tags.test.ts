@@ -25,6 +25,18 @@ const validProfileRequest = {
     rhythm: 80,
   },
   selectedArtists: ['Ben Klock'],
+  lineageWeights: {
+    'Berlin hypnotic': 1,
+  },
+  artistAnchorWeights: {
+    'Ben Klock': 1,
+  },
+  discoveryDepth: {
+    recognitionBias: 75,
+    independentBias: 25,
+    historicalBias: 40,
+    functionalBias: 50,
+  },
   calibration: {
     onboardingWeight: 1,
     behaviorWeight: 0,

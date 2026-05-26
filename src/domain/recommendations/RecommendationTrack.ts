@@ -6,5 +6,6 @@ export type RecommendationTrack = Track & {
   contexts: ListeningContext[];
   dimensions: TrackDimensions;
   reason: string;
+  genreLineage?: string;
   relatedArtists?: string[];
 };

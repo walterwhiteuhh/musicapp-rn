@@ -1,4 +1,6 @@
 import type { ListeningContext, TasteProfileDraft } from '@/domain/taste/TasteProfile';
+import { createInitialDiscoveryDepth } from '@/domain/catalog';
+import { starterArtistReferences } from '@/data/catalog';
 
 export const electronicGenres = [
   'Techno',
@@ -13,6 +15,17 @@ export const electronicGenres = [
   'UK Garage',
   'Leftfield Bass',
   'Downtempo',
+];
+
+export const lineageOptions = [
+  'early trance / rave',
+  'Berlin hypnotic',
+  'melodic / progressive',
+  'UK breaks / garage',
+  'dub techno',
+  'electro',
+  'hardgroove',
+  'ambient / listening',
 ];
 
 export const listeningContexts: ListeningContext[] = [
@@ -126,4 +139,62 @@ export function deriveArtistSuggestions(profile: TasteProfileDraft, limit = 10):
     .sort((left, right) => right.score - left.score || left.index - right.index)
     .slice(0, limit)
     .map((entry) => entry.artist);
+}
+
+export function enrichTasteDraft(profile: TasteProfileDraft): TasteProfileDraft {
+  return {
+    ...profile,
+    lineageWeights: deriveLineageWeights(profile),
+    artistAnchorWeights: deriveArtistAnchorWeights(profile.selectedArtists),
+    discoveryDepth: createInitialDiscoveryDepth(0),
+  };
+}
+
+export function deriveLineageWeights(profile: TasteProfileDraft): Record<string, number> {
+  const weights: Record<string, number> = {};
+
+  for (const genre of profile.genres) {
+    for (const lineage of genreLineages[genre] ?? []) {
+      weights[lineage] = (weights[lineage] ?? 0) + 2;
+    }
+  }
+
+  for (const artistName of profile.selectedArtists) {
+    const artist = starterArtistReferences.find((reference) => reference.name === artistName);
+
+    for (const lineage of artist?.lineages ?? []) {
+      weights[lineage] = (weights[lineage] ?? 0) + 3;
+    }
+  }
+
+  return normalizeWeights(weights);
+}
+
+export function deriveArtistAnchorWeights(selectedArtists: string[]): Record<string, number> {
+  return Object.fromEntries(selectedArtists.map((artist) => [artist, 1]));
+}
+
+const genreLineages: Record<string, string[]> = {
+  Techno: ['Berlin hypnotic', 'hardgroove'],
+  House: ['melodic / progressive'],
+  Electro: ['electro'],
+  Breakbeat: ['UK breaks / garage'],
+  'Drum & Bass': ['UK breaks / garage'],
+  Ambient: ['ambient / listening'],
+  IDM: ['ambient / listening', 'UK breaks / garage'],
+  Trance: ['early trance / rave', 'melodic / progressive'],
+  'Dub Techno': ['dub techno', 'Berlin hypnotic'],
+  'UK Garage': ['UK breaks / garage'],
+  'Leftfield Bass': ['UK breaks / garage'],
+  Downtempo: ['melodic / progressive', 'ambient / listening'],
+};
+
+function normalizeWeights(weights: Record<string, number>): Record<string, number> {
+  const maxWeight = Math.max(1, ...Object.values(weights));
+
+  return Object.fromEntries(
+    Object.entries(weights)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, value]) => [key, Math.round((value / maxWeight) * 100) / 100]),
+  );
 }

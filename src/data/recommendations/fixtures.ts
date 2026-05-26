@@ -10,6 +10,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     source: 'soundcloud',
     externalUrl: 'https://soundcloud.com/boris-brejcha',
     relatedArtists: ['Boris Brejcha', 'Charlotte de Witte', 'Amelie Lens'],
+    genreLineage: 'early trance / rave',
     genre: 'Techno',
     contexts: ['Club', 'Afterhours'],
     dimensions: {
@@ -30,6 +31,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     source: 'soundcloud',
     externalUrl: 'https://soundcloud.com/ben-bohmer',
     relatedArtists: ['Ben Böhmer', 'NTO', 'Worakls'],
+    genreLineage: 'melodic / progressive',
     genre: 'Downtempo',
     contexts: ['Home', 'Headphones'],
     dimensions: {
@@ -50,6 +52,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     source: 'soundcloud',
     externalUrl: 'https://m.soundcloud.com/fourfourmagazine/four-four-global-mix-048-anfisa-letyago',
     relatedArtists: ['Anfisa Letyago', 'Charlotte de Witte', 'Amelie Lens'],
+    genreLineage: 'hardgroove',
     genre: 'Techno',
     contexts: ['Club', 'Training'],
     dimensions: {
@@ -70,6 +73,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     source: 'soundcloud',
     externalUrl: 'https://soundcloud.com/kikimusic',
     relatedArtists: ['KI/KI', 'Job Jobse', 'DJ Heartstring', 'Marlon Hoffstadt'],
+    genreLineage: 'early trance / rave',
     genre: 'Trance',
     contexts: ['Afterhours', 'Night drive'],
     dimensions: {
@@ -90,6 +94,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     source: 'soundcloud',
     externalUrl: 'https://soundcloud.com/feelmybicep',
     relatedArtists: ['Bicep', 'Overmono', 'Burial'],
+    genreLineage: 'UK breaks / garage',
     genre: 'Breakbeat',
     contexts: ['Headphones', 'Home'],
     dimensions: {
@@ -110,6 +115,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     source: 'soundcloud',
     externalUrl: 'https://soundcloud.com/paulkalkbrenner',
     relatedArtists: ['Paul Kalkbrenner', 'Solomun', 'Kölsch'],
+    genreLineage: 'melodic / progressive',
     genre: 'House',
     contexts: ['Home', 'Afterhours'],
     dimensions: {

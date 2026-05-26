@@ -1,3 +1,4 @@
+import type { DiscoveryDepth } from '../catalog';
 import type { RecommendationCalibration, TasteProfile, TrackDimensions } from '../taste';
 
 export type ProfileEnergy = 'low' | 'medium' | 'high';
@@ -18,6 +19,9 @@ export type ProfileTagsRequest = {
   contexts: string[];
   dimensions: TrackDimensions;
   selectedArtists: string[];
+  lineageWeights: Record<string, number>;
+  artistAnchorWeights: Record<string, number>;
+  discoveryDepth: DiscoveryDepth;
   calibration: RecommendationCalibration;
 };
 
@@ -28,6 +32,9 @@ export function createProfileTagsRequest(profile: TasteProfile): ProfileTagsRequ
     contexts: profile.contexts,
     dimensions: profile.dimensions,
     selectedArtists: profile.selectedArtists,
+    lineageWeights: profile.lineageWeights,
+    artistAnchorWeights: profile.artistAnchorWeights,
+    discoveryDepth: profile.discoveryDepth,
     calibration: profile.calibration,
   };
 }
@@ -91,6 +98,9 @@ export function isProfileTagsRequest(payload: unknown): payload is ProfileTagsRe
     isStringArray(payload.contexts) &&
     isTrackDimensions(payload.dimensions) &&
     isStringArray(payload.selectedArtists) &&
+    isNumberRecord(payload.lineageWeights) &&
+    isNumberRecord(payload.artistAnchorWeights) &&
+    isDiscoveryDepth(payload.discoveryDepth) &&
     isCalibration(payload.calibration)
   );
 }
@@ -120,6 +130,20 @@ function isCalibration(value: unknown): value is RecommendationCalibration {
 
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === 'string');
+}
+
+function isNumberRecord(value: unknown): value is Record<string, number> {
+  return isRecord(value) && Object.values(value).every((item) => typeof item === 'number');
+}
+
+function isDiscoveryDepth(value: unknown): value is DiscoveryDepth {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return ['recognitionBias', 'independentBias', 'historicalBias', 'functionalBias'].every(
+    (key) => typeof value[key] === 'number',
+  );
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

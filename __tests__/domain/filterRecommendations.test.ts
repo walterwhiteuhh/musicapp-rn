@@ -1,4 +1,5 @@
 import { electronicRecommendationFixtures } from '@/data/recommendations/fixtures';
+import { createInitialDiscoveryDepth } from '@/domain/catalog';
 import { filterRecommendations } from '@/domain/recommendations/filterRecommendations';
 import type { TasteProfile } from '@/domain/taste/TasteProfile';
 
@@ -15,6 +16,13 @@ const baseProfile: TasteProfile = {
   },
   suggestedArtists: ['Ben Böhmer', 'NTO'],
   selectedArtists: ['Ben Böhmer'],
+  lineageWeights: {
+    'melodic / progressive': 1,
+  },
+  artistAnchorWeights: {
+    'Ben Böhmer': 1,
+  },
+  discoveryDepth: createInitialDiscoveryDepth(0),
   calibration: {
     onboardingWeight: 1,
     behaviorWeight: 0,

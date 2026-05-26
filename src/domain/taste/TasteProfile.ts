@@ -1,3 +1,5 @@
+import { createInitialDiscoveryDepth, type DiscoveryDepth } from '@/domain/catalog';
+
 export type ListeningContext =
   | 'Club'
   | 'Headphones'
@@ -29,6 +31,9 @@ export type TasteProfile = {
   dimensions: TrackDimensions;
   suggestedArtists: string[];
   selectedArtists: string[];
+  lineageWeights: Record<string, number>;
+  artistAnchorWeights: Record<string, number>;
+  discoveryDepth: DiscoveryDepth;
   calibration: RecommendationCalibration;
   completedAt: string | null;
   updatedAt: string;
@@ -40,6 +45,9 @@ export type TasteProfileDraft = {
   dimensions: TrackDimensions;
   suggestedArtists: string[];
   selectedArtists: string[];
+  lineageWeights: Record<string, number>;
+  artistAnchorWeights: Record<string, number>;
+  discoveryDepth: DiscoveryDepth;
 };
 
 export type TasteProfileValidation = {
@@ -64,6 +72,9 @@ export const emptyTasteProfileDraft: TasteProfileDraft = {
   dimensions: defaultTrackDimensions,
   suggestedArtists: [],
   selectedArtists: [],
+  lineageWeights: {},
+  artistAnchorWeights: {},
+  discoveryDepth: createInitialDiscoveryDepth(0),
 };
 
 export const minimumTasteProfile = {
@@ -145,6 +156,9 @@ export function completeTasteProfile(
   return {
     schemaVersion: 1,
     ...profile,
+    lineageWeights: profile.lineageWeights,
+    artistAnchorWeights: profile.artistAnchorWeights,
+    discoveryDepth: profile.discoveryDepth,
     calibration: initialRecommendationCalibration,
     completedAt: timestamp,
     updatedAt: timestamp,
