@@ -27,13 +27,14 @@ describe('DiscoverScreen', () => {
     render(<DiscoverScreen />);
 
     expect(await screen.findByText('Red In The Desert')).toBeTruthy();
+    expect(screen.getByText('Featured from your Klangprofil')).toBeTruthy();
     expect(screen.getByText('Create taste profile')).toBeTruthy();
-    expect(screen.getAllByText('Open on SoundCloud').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Open source on SoundCloud').length).toBeGreaterThan(0);
   });
 
   it('opens recommendation links on SoundCloud', async () => {
     render(<DiscoverScreen />);
-    fireEvent.press((await screen.findAllByText('Open on SoundCloud'))[0]);
+    fireEvent.press((await screen.findAllByText('Open source on SoundCloud'))[0]);
 
     expect(Linking.openURL).toHaveBeenCalledWith('https://soundcloud.com/boris-brejcha');
   });

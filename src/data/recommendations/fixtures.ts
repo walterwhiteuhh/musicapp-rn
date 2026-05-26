@@ -9,6 +9,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     durationMs: 485000,
     source: 'soundcloud',
     externalUrl: 'https://soundcloud.com/boris-brejcha',
+    relatedArtists: ['Boris Brejcha', 'Charlotte de Witte', 'Amelie Lens'],
     genre: 'Techno',
     contexts: ['Club', 'Afterhours'],
     dimensions: {
@@ -28,6 +29,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     durationMs: 313000,
     source: 'soundcloud',
     externalUrl: 'https://soundcloud.com/ben-bohmer',
+    relatedArtists: ['Ben Böhmer', 'NTO', 'Worakls'],
     genre: 'Downtempo',
     contexts: ['Home', 'Headphones'],
     dimensions: {
@@ -47,6 +49,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     durationMs: 3512000,
     source: 'soundcloud',
     externalUrl: 'https://m.soundcloud.com/fourfourmagazine/four-four-global-mix-048-anfisa-letyago',
+    relatedArtists: ['Anfisa Letyago', 'Charlotte de Witte', 'Amelie Lens'],
     genre: 'Techno',
     contexts: ['Club', 'Training'],
     dimensions: {
@@ -66,6 +69,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     durationMs: 360000,
     source: 'soundcloud',
     externalUrl: 'https://soundcloud.com/kikimusic',
+    relatedArtists: ['KI/KI', 'Job Jobse', 'DJ Heartstring', 'Marlon Hoffstadt'],
     genre: 'Trance',
     contexts: ['Afterhours', 'Night drive'],
     dimensions: {
@@ -85,6 +89,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     durationMs: 360000,
     source: 'soundcloud',
     externalUrl: 'https://soundcloud.com/feelmybicep',
+    relatedArtists: ['Bicep', 'Overmono', 'Burial'],
     genre: 'Breakbeat',
     contexts: ['Headphones', 'Home'],
     dimensions: {
@@ -104,6 +109,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
     durationMs: 360000,
     source: 'soundcloud',
     externalUrl: 'https://soundcloud.com/paulkalkbrenner',
+    relatedArtists: ['Paul Kalkbrenner', 'Solomun', 'Kölsch'],
     genre: 'House',
     contexts: ['Home', 'Afterhours'],
     dimensions: {

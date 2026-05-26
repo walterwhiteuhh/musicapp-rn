@@ -128,7 +128,8 @@ function TrackResult({ track }: { track: Track }) {
         </Text>
         {track.externalUrl ? (
           <Pressable accessibilityRole="link" style={styles.soundCloudLink} onPress={openSoundCloud}>
-            <Text style={styles.soundCloudLinkText}>Open on SoundCloud</Text>
+            <Text style={styles.sourceLabel}>Source</Text>
+            <Text style={styles.soundCloudLinkText}>Open source on SoundCloud</Text>
           </Pressable>
         ) : null}
       </View>
@@ -264,14 +265,23 @@ const styles = StyleSheet.create({
   },
   soundCloudLink: {
     alignSelf: 'flex-start',
-    backgroundColor: '#FF5500',
+    backgroundColor: '#15100B',
+    borderColor: '#FF5500',
     borderRadius: 8,
+    borderWidth: 1,
+    gap: 3,
     marginTop: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
+    paddingHorizontal: 11,
+    paddingVertical: 8,
+  },
+  sourceLabel: {
+    color: '#FF8A3D',
+    fontSize: 10,
+    fontWeight: '900',
+    textTransform: 'uppercase',
   },
   soundCloudLinkText: {
-    color: '#1B0B00',
+    color: colors.text,
     fontSize: 12,
     fontWeight: '900',
   },

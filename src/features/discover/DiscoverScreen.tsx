@@ -1,5 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import { FlatList, Linking, Platform, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import {
+  FlatList,
+  Linking,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ActionButton } from '@/components/ActionButton';
@@ -26,30 +35,36 @@ export function DiscoverScreen() {
   const recommendations = useMemo(() => {
     return filterRecommendations(electronicRecommendationFixtures, profile);
   }, [profile]);
+  const featuredTrack = recommendations[0] ?? null;
+  const feedTracks = featuredTrack ? recommendations.slice(1) : recommendations;
 
   return (
     <ScreenContainer>
       <FlatList
         key={useGrid ? 'grid' : 'list'}
         ListHeaderComponent={
-          <View style={styles.header}>
-            <Text style={styles.eyebrow}>Klangfeld</Text>
-            <Text style={styles.title}>Curated signals for electronic discovery.</Text>
-            <Text style={styles.subtitle}>
-              {profile?.completedAt
-                ? 'Your Klangprofil shapes this preview feed before the player and SoundCloud proxy arrive.'
-                : 'Demo mode is active: real SoundCloud links, local matching, no embedded player yet.'}
-            </Text>
-            {!profile?.completedAt && (
-              <ActionButton onPress={() => router.push('/onboarding/welcome' as never)}>
-                Create taste profile
-              </ActionButton>
-            )}
+          <View style={styles.headerStack}>
+            <View style={styles.header}>
+              <Text style={styles.eyebrow}>Klangfeld</Text>
+              <Text style={styles.title}>Your electronic discovery surface.</Text>
+              <Text style={styles.subtitle}>
+                {profile?.completedAt
+                  ? 'Artist picks start strong now and fade as listening behavior becomes more useful.'
+                  : 'Demo mode is active: Klangfeld actions first, source links second.'}
+              </Text>
+              {!profile?.completedAt && (
+                <ActionButton onPress={() => router.push('/onboarding/welcome' as never)}>
+                  Create taste profile
+                </ActionButton>
+              )}
+            </View>
+            {featuredTrack ? <FeaturedPreview track={featuredTrack} /> : null}
+            <Text style={styles.sectionTitle}>Next signals</Text>
           </View>
         }
         columnWrapperStyle={useGrid ? styles.columnWrapper : undefined}
         contentContainerStyle={styles.list}
-        data={recommendations}
+        data={feedTracks}
         keyExtractor={(item) => item.id}
         numColumns={useGrid ? 2 : 1}
         renderItem={({ item }) => <RecommendationCard track={item} />}
@@ -58,15 +73,45 @@ export function DiscoverScreen() {
   );
 }
 
+function FeaturedPreview({ track }: { track: RecommendationTrack }) {
+  return (
+    <View style={styles.featuredCard}>
+      <Text style={styles.previewLabel}>Featured from your Klangprofil</Text>
+      <View style={styles.playerSurface}>
+        <View style={styles.previewSignal}>
+          <View style={[styles.previewBar, { height: 24 }]} />
+          <View style={[styles.previewBar, { height: 54 }]} />
+          <View style={[styles.previewBar, { height: 34 }]} />
+          <View style={[styles.previewBar, { height: 70 }]} />
+          <View style={[styles.previewBar, { height: 42 }]} />
+          <View style={[styles.previewBar, { height: 28 }]} />
+          <View style={[styles.previewBar, { height: 58 }]} />
+        </View>
+        <View style={styles.playerCopy}>
+          <Text numberOfLines={1} style={styles.featuredTitle}>
+            {track.title}
+          </Text>
+          <Text numberOfLines={1} style={styles.featuredArtist}>
+            {track.artistName}
+          </Text>
+          <Text style={styles.previewUnavailable}>Playback arrives later. Discovery data is active.</Text>
+        </View>
+      </View>
+      <View style={styles.primaryActions}>
+        <ActionPill label="Save" />
+        <ActionPill label="More like this" />
+        <ActionPill label="Skip" muted />
+      </View>
+      <View style={styles.reasonBox}>
+        <Text style={styles.reasonLabel}>Why this leads</Text>
+        <Text style={styles.reasonText}>{track.reason}</Text>
+      </View>
+      <SourceLink track={track} />
+    </View>
+  );
+}
+
 function RecommendationCard({ track }: { track: RecommendationTrack }) {
-  const openSoundCloud = async () => {
-    if (!track.externalUrl) {
-      return;
-    }
-
-    await Linking.openURL(track.externalUrl).catch(() => undefined);
-  };
-
   return (
     <View style={styles.card}>
       <View style={styles.artwork}>
@@ -112,13 +157,46 @@ function RecommendationCard({ track }: { track: RecommendationTrack }) {
           <Text style={styles.reasonLabel}>Why recommended</Text>
           <Text style={styles.reasonText}>{track.reason}</Text>
         </View>
-        {track.externalUrl ? (
-          <Pressable accessibilityRole="link" style={styles.soundCloudButton} onPress={openSoundCloud}>
-            <Text style={styles.soundCloudButtonText}>Open on SoundCloud</Text>
-          </Pressable>
-        ) : null}
+        <View style={styles.primaryActions}>
+          <ActionPill label="Save" />
+          <ActionPill label="Tune profile" />
+        </View>
+        <SourceLink track={track} compact />
       </View>
     </View>
+  );
+}
+
+function ActionPill({ label, muted = false }: { label: string; muted?: boolean }) {
+  return (
+    <Pressable accessibilityRole="button" style={[styles.actionPill, muted && styles.actionPillMuted]}>
+      <Text style={[styles.actionPillText, muted && styles.actionPillTextMuted]}>{label}</Text>
+    </Pressable>
+  );
+}
+
+function SourceLink({ track, compact = false }: { track: RecommendationTrack; compact?: boolean }) {
+  const openSource = async () => {
+    if (!track.externalUrl) {
+      return;
+    }
+
+    await Linking.openURL(track.externalUrl).catch(() => undefined);
+  };
+
+  if (!track.externalUrl) {
+    return null;
+  }
+
+  return (
+    <Pressable
+      accessibilityRole="link"
+      style={[styles.sourceLink, compact && styles.sourceLinkCompact]}
+      onPress={openSource}
+    >
+      <Text style={styles.sourceLabel}>Source</Text>
+      <Text style={styles.sourceText}>Open source on SoundCloud</Text>
+    </Pressable>
   );
 }
 
@@ -155,6 +233,9 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingBottom: 10,
   },
+  headerStack: {
+    gap: 14,
+  },
   eyebrow: {
     color: colors.primary,
     fontSize: 13,
@@ -171,6 +252,63 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontSize: 16,
     lineHeight: 23,
+  },
+  sectionTitle: {
+    color: colors.text,
+    fontSize: 17,
+    fontWeight: '900',
+    paddingTop: 2,
+  },
+  featuredCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 14,
+    padding: 16,
+  },
+  previewLabel: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
+  playerSurface: {
+    backgroundColor: '#071018',
+    borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 16,
+    padding: 16,
+  },
+  previewSignal: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    gap: 8,
+    height: 76,
+  },
+  previewBar: {
+    backgroundColor: colors.primary,
+    borderRadius: 999,
+    width: 10,
+  },
+  playerCopy: {
+    gap: 6,
+  },
+  featuredTitle: {
+    color: colors.text,
+    fontSize: 25,
+    fontWeight: '900',
+  },
+  featuredArtist: {
+    color: colors.muted,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  previewUnavailable: {
+    color: colors.muted,
+    fontSize: 13,
+    lineHeight: 19,
   },
   card: {
     backgroundColor: colors.surface,
@@ -314,17 +452,52 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
-  soundCloudButton: {
-    alignItems: 'center',
-    backgroundColor: '#FF5500',
-    borderRadius: 8,
-    minHeight: 44,
-    justifyContent: 'center',
-    paddingHorizontal: 14,
+  primaryActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
   },
-  soundCloudButtonText: {
-    color: '#1B0B00',
-    fontSize: 14,
+  actionPill: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    minHeight: 38,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+  },
+  actionPillMuted: {
+    backgroundColor: colors.elevated,
+    borderColor: colors.border,
+    borderWidth: 1,
+  },
+  actionPillText: {
+    color: '#06110F',
+    fontSize: 13,
     fontWeight: '900',
+  },
+  actionPillTextMuted: {
+    color: colors.muted,
+  },
+  sourceLink: {
+    backgroundColor: '#15100B',
+    borderColor: '#FF5500',
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 3,
+    padding: 12,
+  },
+  sourceLinkCompact: {
+    paddingVertical: 10,
+  },
+  sourceLabel: {
+    color: '#FF8A3D',
+    fontSize: 11,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
+  sourceText: {
+    color: colors.text,
+    fontSize: 13,
+    fontWeight: '800',
   },
 });

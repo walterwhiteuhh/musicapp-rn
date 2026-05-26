@@ -28,6 +28,14 @@ function scoreRecommendation(track: RecommendationTrack, profile: TasteProfile):
     score += 4;
   }
 
+  if (profile.selectedArtists.includes(track.artistName)) {
+    score += 7;
+  }
+
+  score +=
+    (track.relatedArtists?.filter((artist) => profile.selectedArtists.includes(artist)).length ??
+      0) * 3;
+
   score += track.contexts.filter((context) => profile.contexts.includes(context)).length * 2;
   score += Math.max(0, 4 - dimensionDistance(track.dimensions, profile.dimensions) / 25);
 

@@ -56,7 +56,7 @@ describe('SearchScreen', () => {
     expect(searchTracks).toHaveBeenCalledWith('signal');
     expect(await screen.findByText('Late Night Signal')).toBeTruthy();
     expect(screen.getByText('Mira Vale')).toBeTruthy();
-    expect(screen.getByText('Open on SoundCloud')).toBeTruthy();
+    expect(screen.getByText('Open source on SoundCloud')).toBeTruthy();
   });
 
   it('opens linked search results on SoundCloud', async () => {
@@ -64,7 +64,7 @@ describe('SearchScreen', () => {
     renderWithProvider({ searchTracks });
     await enterQueryAndSearch('signal');
 
-    fireEvent.press(await screen.findByText('Open on SoundCloud'));
+    fireEvent.press(await screen.findByText('Open source on SoundCloud'));
 
     expect(Linking.openURL).toHaveBeenCalledWith('https://soundcloud.com/ben-bohmer');
   });

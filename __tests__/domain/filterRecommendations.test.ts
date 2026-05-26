@@ -34,6 +34,28 @@ describe('filterRecommendations', () => {
     );
   });
 
+  it('weights selected and related artists as early profile anchors', () => {
+    const [firstTrack] = filterRecommendations(electronicRecommendationFixtures, {
+      ...baseProfile,
+      genres: ['House'],
+      contexts: ['Home'],
+      selectedArtists: ['Paul Kalkbrenner'],
+      dimensions: {
+        energy: 58,
+        density: 36,
+        texture: 32,
+        space: 58,
+        rhythm: 28,
+      },
+    });
+
+    expect(firstTrack).toEqual(
+      expect.objectContaining({
+        artistName: 'Paul Kalkbrenner',
+      }),
+    );
+  });
+
   it('falls back to all tracks when there is no useful match', () => {
     expect(
       filterRecommendations(electronicRecommendationFixtures, {
