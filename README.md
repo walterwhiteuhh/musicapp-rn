@@ -1,6 +1,8 @@
-# MusicApp RN
+# Klangfeld
 
-Greenfield Expo app for a SoundCloud-backed music search experience. Iteration 1 focuses on a store-ready Android foundation, strict TypeScript, TDD, and a tested search slice.
+Klangfeld is an Expo app for SoundCloud-backed electronic music discovery. It combines curated scene knowledge, transparent recommendation signals, weighted tags, technical reads, and a backend planning path for safer profile and API-key handling.
+
+The technical repository name is still `musicapp-rn`. While Netlify is blocked by account credits, GitHub is the working source of truth. See [docs/github-workflow.md](docs/github-workflow.md) for the current branch, deployment status, gates, and Netlify return path.
 
 ## Setup
 
@@ -17,22 +19,28 @@ cp .env.example .env.local
 ## Scripts
 
 ```sh
-npm test
+npm.cmd test -- --watch=false
 npm run test:watch
-npm run typecheck
-npm run lint
+npm.cmd run typecheck
+npm.cmd run lint
 npm start
+```
+
+For web output:
+
+```sh
+npm.cmd run build:web
 ```
 
 ## Android / Play Store Foundation
 
-- Android package placeholder: `com.example.musicapp`
+- Android package: `com.klangfeld.app`
 - App version: `1.0.0`
 - Android version code: `1`
 - EAS profiles: `development`, `preview`, `production`
 - Production Android builds are configured as app bundles (`.aab`)
 
-Before submitting to Google Play, replace the placeholder package ID and app branding, then configure a Google Play service account for `eas submit`.
+Before submitting to Google Play, configure a Google Play service account for `eas submit`.
 
 ## SoundCloud Boundary
 
