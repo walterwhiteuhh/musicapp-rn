@@ -13,7 +13,7 @@ import {
   type TasteProfileValidation,
   type TrackDimensions,
 } from '@/domain/taste/TasteProfile';
-import { deriveArtistSuggestions } from './options';
+import { deriveArtistSuggestions, enrichTasteDraft } from './options';
 
 type OnboardingContextValue = {
   draft: TasteProfileDraft;
@@ -41,10 +41,12 @@ export function OnboardingProvider({ children, initialDraft }: OnboardingProvide
       draft,
       validation: validateTasteProfile(draft),
       toggleGenre: (genre) => {
-        setDraft((current) => ({
-          ...current,
-          genres: toggleLimitedValue(current.genres, genre, maximumTasteProfile.genres),
-        }));
+        setDraft((current) =>
+          enrichTasteDraft({
+            ...current,
+            genres: toggleLimitedValue(current.genres, genre, maximumTasteProfile.genres),
+          }),
+        );
       },
       toggleContext: (context) => {
         setDraft((current) => ({
@@ -60,28 +62,30 @@ export function OnboardingProvider({ children, initialDraft }: OnboardingProvide
       },
       refreshArtistSuggestions: () => {
         setDraft((current) => {
-          const suggestedArtists = deriveArtistSuggestions(current);
+          const suggestedArtists = deriveArtistSuggestions(enrichTasteDraft(current));
 
-          return {
+          return enrichTasteDraft({
             ...current,
             suggestedArtists,
             selectedArtists: current.selectedArtists.filter((artist) =>
               suggestedArtists.includes(artist),
             ),
-          };
+          });
         });
       },
       toggleSelectedArtist: (artist) => {
-        setDraft((current) => ({
-          ...current,
-          selectedArtists: toggleLimitedValue(
-            current.selectedArtists,
-            artist,
-            maximumTasteProfile.selectedArtists,
-          ),
-        }));
+        setDraft((current) =>
+          enrichTasteDraft({
+            ...current,
+            selectedArtists: toggleLimitedValue(
+              current.selectedArtists,
+              artist,
+              maximumTasteProfile.selectedArtists,
+            ),
+          }),
+        );
       },
-      complete: () => completeTasteProfile(draft),
+      complete: () => completeTasteProfile(enrichTasteDraft(draft)),
       reset: () => {
         setDraft(emptyTasteProfileDraft);
       },

@@ -5,6 +5,7 @@ import {
   tasteProfileStorageKey,
 } from '@/data/taste/AsyncStorageTasteProfileRepository';
 import type { TasteProfile } from '@/domain/taste/TasteProfile';
+import { createInitialDiscoveryDepth } from '@/domain/catalog';
 
 const profile: TasteProfile = {
   schemaVersion: 1,
@@ -19,6 +20,13 @@ const profile: TasteProfile = {
   },
   suggestedArtists: ['Ben Klock', 'Jon Hopkins'],
   selectedArtists: ['Ben Klock'],
+  lineageWeights: {
+    'Berlin hypnotic': 1,
+  },
+  artistAnchorWeights: {
+    'Ben Klock': 1,
+  },
+  discoveryDepth: createInitialDiscoveryDepth(0),
   calibration: {
     onboardingWeight: 1,
     behaviorWeight: 0,
@@ -53,6 +61,19 @@ describe('AsyncStorageTasteProfileRepository', () => {
     const repository = new AsyncStorageTasteProfileRepository();
 
     await expect(repository.getProfile()).resolves.toBeNull();
+  });
+
+  it('hydrates legacy versioned profiles with default derived fields', async () => {
+    const { lineageWeights, artistAnchorWeights, discoveryDepth, ...legacyProfile } = profile;
+    await AsyncStorage.setItem(tasteProfileStorageKey, JSON.stringify(legacyProfile));
+
+    const repository = new AsyncStorageTasteProfileRepository();
+
+    await expect(repository.getProfile()).resolves.toMatchObject({
+      lineageWeights: {},
+      artistAnchorWeights: {},
+      discoveryDepth,
+    });
   });
 
   it('clears a stored profile', async () => {

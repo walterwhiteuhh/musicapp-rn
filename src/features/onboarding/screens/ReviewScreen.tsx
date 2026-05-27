@@ -37,6 +37,14 @@ export function ReviewScreen() {
     >
       <View style={styles.summaryCard}>
         <SummaryRow label="Genres" value={draft.genres.join(', ')} />
+        <SummaryRow
+          label="Lineages"
+          value={Object.entries(draft.lineageWeights ?? {})
+            .sort((left, right) => right[1] - left[1])
+            .slice(0, 3)
+            .map(([lineage]) => lineage)
+            .join(', ')}
+        />
         <SummaryRow label="Contexts" value={draft.contexts.join(', ')} />
         <SummaryRow label="Reference artists" value={draft.selectedArtists.join(', ')} />
       </View>

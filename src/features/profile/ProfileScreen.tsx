@@ -87,6 +87,22 @@ export function ProfileScreen({
               <ProfileRow label="Contexts" value={profile.contexts.join(', ')} />
               <ProfileRow label="Artists" value={profile.selectedArtists.join(', ')} />
               <ProfileRow
+                label="Lineages"
+                value={
+                  Object.entries(profile.lineageWeights ?? {})
+                    .sort((left, right) => right[1] - left[1])
+                    .slice(0, 3)
+                    .map(([lineage]) => lineage)
+                    .join(', ') || 'Not calibrated yet'
+                }
+              />
+              <ProfileRow
+                label="Discovery depth"
+                value={`Known ${Math.round(
+                  profile.discoveryDepth.recognitionBias,
+                )} / independent ${Math.round(profile.discoveryDepth.independentBias)}`}
+              />
+              <ProfileRow
                 label="Calibration"
                 value={`Onboarding ${Math.round(
                   profile.calibration.onboardingWeight * 100,

@@ -1,4 +1,5 @@
 import {
+  emptyTasteProfileDraft,
   completeTasteProfile,
   deriveRecommendationCalibration,
   toggleLimitedValue,
@@ -7,6 +8,7 @@ import {
 } from '@/domain/taste/TasteProfile';
 
 const validDraft = {
+  ...emptyTasteProfileDraft,
   genres: ['Techno', 'Dub Techno'],
   contexts: ['Club' as const],
   dimensions: {
@@ -18,6 +20,12 @@ const validDraft = {
   },
   suggestedArtists: ['Ben Klock', 'Deepchord'],
   selectedArtists: ['Ben Klock'],
+  lineageWeights: {
+    'Berlin hypnotic': 1,
+  },
+  artistAnchorWeights: {
+    'Ben Klock': 1,
+  },
 };
 
 describe('TasteProfile domain', () => {

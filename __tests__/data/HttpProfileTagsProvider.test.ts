@@ -1,4 +1,5 @@
 import { HttpProfileTagsProvider } from '@/data/profileTags';
+import { createInitialDiscoveryDepth } from '@/domain/catalog';
 import type { TasteProfile } from '@/domain/taste';
 
 const profile: TasteProfile = {
@@ -14,6 +15,13 @@ const profile: TasteProfile = {
   },
   suggestedArtists: ['Ben Klock'],
   selectedArtists: ['Ben Klock'],
+  lineageWeights: {
+    'Berlin hypnotic': 1,
+  },
+  artistAnchorWeights: {
+    'Ben Klock': 1,
+  },
+  discoveryDepth: createInitialDiscoveryDepth(0),
   calibration: {
     onboardingWeight: 1,
     behaviorWeight: 0,

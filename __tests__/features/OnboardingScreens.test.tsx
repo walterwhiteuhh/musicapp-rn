@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 import { tasteProfileStorageKey } from '@/data/taste/AsyncStorageTasteProfileRepository';
+import { createInitialDiscoveryDepth } from '@/domain/catalog';
 import type { TasteProfileDraft } from '@/domain/taste/TasteProfile';
 import { OnboardingProvider } from '@/features/onboarding/OnboardingContext';
 import { ArtistsScreen } from '@/features/onboarding/screens/ArtistsScreen';
@@ -28,7 +29,7 @@ function renderWithOnboarding(ui: ReactElement, initialDraft?: TasteProfileDraft
 }
 
 const completedDraft: TasteProfileDraft = {
-  genres: ['Techno', 'Dub Techno'],
+  genres: ['Peak-time Techno', 'Dub Techno'],
   contexts: ['Club'],
   dimensions: {
     energy: 70,
@@ -39,6 +40,13 @@ const completedDraft: TasteProfileDraft = {
   },
   suggestedArtists: ['Boris Brejcha', 'Charlotte de Witte', 'Amelie Lens'],
   selectedArtists: ['Boris Brejcha'],
+  lineageWeights: {
+    'early trance / rave': 1,
+  },
+  artistAnchorWeights: {
+    'Boris Brejcha': 1,
+  },
+  discoveryDepth: createInitialDiscoveryDepth(0),
 };
 
 describe('Onboarding screens', () => {
@@ -63,7 +71,7 @@ describe('Onboarding screens', () => {
     fireEvent.press(screen.getByText('Next'));
     expect(mockPush).not.toHaveBeenCalled();
 
-    fireEvent.press(screen.getByText('Techno'));
+    fireEvent.press(screen.getByText('Peak-time Techno'));
     fireEvent.press(screen.getByText('House'));
     fireEvent.press(screen.getByText('Next'));
 
@@ -94,6 +102,7 @@ describe('Onboarding screens', () => {
     expect(mockPush).not.toHaveBeenCalled();
 
     fireEvent.press(await screen.findByText('Boris Brejcha'));
+    expect(screen.getByText('High-tech minimal')).toBeTruthy();
     fireEvent.press(screen.getByText('Review profile'));
 
     expect(mockPush).toHaveBeenCalledWith('/onboarding/review');
@@ -110,6 +119,9 @@ describe('Onboarding screens', () => {
         '"schemaVersion":1',
       );
     });
+    await expect(AsyncStorage.getItem(tasteProfileStorageKey)).resolves.toContain(
+      '"lineageWeights"',
+    );
     expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
   });
 });

@@ -26,16 +26,27 @@ describe('DiscoverScreen', () => {
   it('renders demo recommendations without a completed profile', async () => {
     render(<DiscoverScreen />);
 
-    expect(await screen.findByText('Red In The Desert')).toBeTruthy();
+    expect(await screen.findByText('Grand Palais for Cercle')).toBeTruthy();
+    expect(screen.getByText('Featured from your Klangprofil')).toBeTruthy();
     expect(screen.getByText('Create taste profile')).toBeTruthy();
-    expect(screen.getAllByText('Open on SoundCloud').length).toBeGreaterThan(0);
+    expect(screen.getByText('Open YouTube live set')).toBeTruthy();
+    expect(screen.getAllByText('Reference layer').length).toBeGreaterThan(0);
   });
 
-  it('opens recommendation links on SoundCloud', async () => {
+  it('opens recommendation source links', async () => {
     render(<DiscoverScreen />);
-    fireEvent.press((await screen.findAllByText('Open on SoundCloud'))[0]);
+    fireEvent.press(await screen.findByText('Open YouTube live set'));
 
-    expect(Linking.openURL).toHaveBeenCalledWith('https://soundcloud.com/boris-brejcha');
+    expect(Linking.openURL).toHaveBeenCalledWith('https://www.youtube.com/watch?v=vqz8c4ZP3Wg');
+  });
+
+  it('uses more like this to focus the next signals list', async () => {
+    render(<DiscoverScreen />);
+
+    fireEvent.press(await screen.findByText('More like this'));
+
+    expect(await screen.findByText('More like Boris Brejcha')).toBeTruthy();
+    expect(screen.getByText('Reset')).toBeTruthy();
   });
 
   it('shows profile-shaped recommendations when a versioned profile exists', async () => {
@@ -43,7 +54,7 @@ describe('DiscoverScreen', () => {
       tasteProfileStorageKey,
       JSON.stringify({
         schemaVersion: 1,
-        genres: ['Downtempo'],
+        genres: ['Melodic Techno', 'Progressive House'],
         contexts: ['Headphones'],
         dimensions: {
           energy: 25,
@@ -52,8 +63,8 @@ describe('DiscoverScreen', () => {
           space: 85,
           rhythm: 35,
         },
-        suggestedArtists: ['Ben Böhmer', 'NTO'],
-        selectedArtists: ['Ben Böhmer'],
+        suggestedArtists: ['Ben Boehmer', 'NTO'],
+        selectedArtists: ['Ben Boehmer'],
         calibration: {
           onboardingWeight: 1,
           behaviorWeight: 0,
@@ -67,6 +78,42 @@ describe('DiscoverScreen', () => {
 
     render(<DiscoverScreen />);
 
-    expect(await screen.findByText('Beyond Beliefs')).toBeTruthy();
+    expect(await screen.findByText('Live above Cappadocia')).toBeTruthy();
+  });
+
+  it('shows radio-show source and technical read for hard-techno profiles', async () => {
+    await AsyncStorage.setItem(
+      tasteProfileStorageKey,
+      JSON.stringify({
+        schemaVersion: 1,
+        genres: ['Hard Techno', 'Trance Revival'],
+        contexts: ['Club', 'Training'],
+        dimensions: {
+          energy: 88,
+          density: 78,
+          texture: 70,
+          space: 34,
+          rhythm: 46,
+        },
+        suggestedArtists: ['Lilly Palmer', 'Armin van Buuren', 'Tiesto'],
+        selectedArtists: ['Lilly Palmer'],
+        calibration: {
+          onboardingWeight: 1,
+          behaviorWeight: 0,
+          confidence: 0,
+          interactionCount: 0,
+        },
+        completedAt: '2026-05-26T10:00:00.000Z',
+        updatedAt: '2026-05-26T10:00:00.000Z',
+      }),
+    );
+
+    render(<DiscoverScreen />);
+
+    expect(await screen.findByText('Spannung Radio Show 054')).toBeTruthy();
+    expect(screen.getByText(/Hard Techno.*Peak-time Techno.*Trance Revival/)).toBeTruthy();
+    expect(screen.getByText('Open SoundCloud radio show')).toBeTruthy();
+    expect(screen.getByText('Technical read')).toBeTruthy();
+    expect(screen.getByText('mainstage pressure')).toBeTruthy();
   });
 });
