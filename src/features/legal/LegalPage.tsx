@@ -52,6 +52,7 @@ function ImprintContent() {
       <LegalSection title="Kontakt">
         <Text style={styles.body}>E-Mail: {legalConfig.contactEmail}</Text>
         <Text style={styles.body}>Website: {legalConfig.appUrl}</Text>
+        <Text style={styles.body}>Weitere Kontaktmoeglichkeiten werden ergaenzt.</Text>
       </LegalSection>
 
       <LegalSection title="Verantwortlich fuer den Inhalt">
@@ -60,9 +61,8 @@ function ImprintContent() {
 
       <LegalSection title="Hinweis">
         <Text style={styles.body}>
-          Dieses Impressum ist als strukturierter Platzhalter angelegt. Vor einem oeffentlichen
-          Store-Release muessen die vollstaendigen Betreiberangaben, insbesondere die
-          ladungsfaehige Anschrift, ergaenzt und rechtlich geprueft werden.
+          Dieses Impressum bildet die derzeit hinterlegten Betreiberangaben ab. Vor einem
+          Store-Release sollten die Angaben und Kontaktwege final rechtlich geprueft werden.
         </Text>
       </LegalSection>
     </>
@@ -124,9 +124,19 @@ function PrivacyContent() {
 
       <LegalSection title="Drittanbieter und externe Links">
         <Text style={styles.body}>
-          Klangfeld kann auf externe Musikquellen wie SoundCloud oder YouTube verlinken. Beim
-          Oeffnen solcher Links gelten die Datenschutzregeln der jeweiligen Anbieter.
+          Klangfeld kann auf externe Musikquellen und redaktionelle Referenzen verlinken. Externe
+          Anbieter werden erst aufgerufen, wenn ein Link aktiv geoeffnet wird. Beim Oeffnen solcher
+          Links gelten die Datenschutzregeln der jeweiligen Anbieter.
         </Text>
+        <View style={styles.providerList}>
+          {legalConfig.externalLinkProviders.map((provider) => (
+            <View key={provider.name} style={styles.providerItem}>
+              <Text style={styles.providerName}>{provider.name}</Text>
+              <Text style={styles.body}>{provider.purpose}</Text>
+              <Text style={styles.providerUrl}>{provider.privacyUrl}</Text>
+            </View>
+          ))}
+        </View>
       </LegalSection>
 
       <LegalSection title="Betroffenenrechte">
@@ -201,6 +211,28 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontSize: 15,
     lineHeight: 22,
+  },
+  providerList: {
+    gap: 10,
+  },
+  providerItem: {
+    backgroundColor: '#0D141D',
+    borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 4,
+    padding: 10,
+  },
+  providerName: {
+    color: colors.text,
+    fontSize: 15,
+    fontWeight: '900',
+  },
+  providerUrl: {
+    color: colors.primary,
+    fontSize: 13,
+    fontWeight: '800',
+    lineHeight: 19,
   },
   actions: {
     gap: 10,
