@@ -20,7 +20,7 @@ export function ContextsScreen() {
     <OnboardingScaffold
       eyebrow="Step 3 of 5"
       title="Where should Klangfeld understand your listening?"
-      description="Pick one to three contexts. These can later become useful stats, not just onboarding labels."
+      description="Pick one to three contexts. They become part of the signal map, not just onboarding labels."
     >
       <View style={styles.grid}>
         {listeningContexts.map((context) => (

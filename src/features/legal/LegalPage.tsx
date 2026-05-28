@@ -52,7 +52,7 @@ function ImprintContent() {
       <LegalSection title="Kontakt">
         <Text style={styles.body}>E-Mail: {legalConfig.contactEmail}</Text>
         <Text style={styles.body}>Website: {legalConfig.appUrl}</Text>
-        <Text style={styles.body}>Weitere Kontaktmoeglichkeiten werden ergaenzt.</Text>
+        <Text style={styles.body}>Kontakt derzeit per E-Mail.</Text>
       </LegalSection>
 
       <LegalSection title="Verantwortlich fuer den Inhalt">
@@ -149,9 +149,9 @@ function PrivacyContent() {
 
       <LegalSection title="Hinweis">
         <Text style={styles.body}>
-          Diese Datenschutzerklaerung ist ein technischer Entwurf fuer den aktuellen App-Stand. Vor
-          einem Store-Release muessen Betreiberangaben, eingesetzte Dienstleister,
-          Rechtsgrundlagen und Datenfluesse final rechtlich geprueft werden.
+          Diese Datenschutzerklaerung beschreibt den aktuellen Funktionsstand von Klangfeld. Vor
+          einem Store-Release sollten eingesetzte Dienstleister, Rechtsgrundlagen und Datenfluesse
+          final rechtlich geprueft werden.
         </Text>
       </LegalSection>
     </>

@@ -119,7 +119,7 @@ export function ProfileScreen({
           ) : (
             <>
               <Text style={styles.bodyText}>
-                No completed taste profile yet. Klangfeld is currently in demo mode.
+                No completed taste profile yet. Klangfeld is using the preview catalog.
               </Text>
               <ActionButton onPress={() => router.push('/onboarding/welcome' as never)}>
                 Create taste profile
@@ -157,15 +157,15 @@ export function ProfileScreen({
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Klangprofil Analyse</Text>
             <Text style={styles.bodyText}>
-              AI profile tags are disabled for this build. Local profile data is still available.
+              AI profile tags are off for this preview. Local profile data remains available.
             </Text>
           </View>
         ) : null}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Play Store readiness</Text>
+          <Text style={styles.cardTitle}>Release foundation</Text>
           <Text style={styles.bodyText}>
-            Android package is configured as com.klangfeld.app. Production builds are planned as
-            EAS app bundles.
+            Android package is configured as com.klangfeld.app. Native release builds are prepared
+            as EAS app bundles.
           </Text>
         </View>
         <View style={styles.card}>

@@ -373,7 +373,7 @@ export const electronicRecommendationFixtures: RecommendationTrack[] = [
       rhythm: 68,
     },
     culturalContext:
-      'UK breaks and rave-memory layer; this should later branch into tracks, edits, and live versions rather than one fixed artist box.',
+      'UK breaks and rave-memory layer that can branch into tracks, edits, and live versions rather than one fixed artist box.',
     reason: 'Useful bridge between club memory and headphone listening without pushing straight into hard techno.',
     sourceLinks: [
       {

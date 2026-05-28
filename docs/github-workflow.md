@@ -1,6 +1,6 @@
 # Klangfeld GitHub Workflow
 
-This repository is the working source of truth for Klangfeld while Netlify is blocked by account credits.
+This repository is the working source of truth for Klangfeld. GitHub carries the reviewed code history; Netlify provides preview and production web deploys.
 
 ## Current Source of Truth
 
@@ -10,7 +10,7 @@ This repository is the working source of truth for Klangfeld while Netlify is bl
 - Netlify project: `klangfeld`
 - Production URL: https://klangfeld.netlify.app
 - Netlify site ID: `bc1d681b-4066-434d-89aa-32e62d74c72a`
-- Netlify status: deployments are blocked while the account reports `Account usage exceeded for credits`.
+- Netlify status: active; use preview deploys by default and production deploys only after explicit approval.
 
 The technical repository name stays `musicapp-rn` for now. Klangfeld is the product name used by the Expo app and product documentation.
 
@@ -59,17 +59,12 @@ npm.cmd run build:web
 
 Commit and push only after the relevant gates pass.
 
-## Netlify Return Path
-
-Do not spend more time debugging Netlify deploy failures while the site is disabled for credits.
-
-When the account is active again:
+## Netlify Deploy Path
 
 1. Check `netlify.cmd status`.
 2. Confirm the linked project is `klangfeld`.
-3. Connect or repair the GitHub repo link if needed.
-4. Use build command `npm ci && npm run build:web`.
-5. Use publish directory `dist`.
-6. Deploy production.
-7. Verify https://klangfeld.netlify.app in the browser.
-
+3. Run `npm.cmd run build:web`.
+4. Create a preview with `netlify.cmd deploy --dir=dist --functions=netlify/functions`.
+5. Review the preview URL.
+6. Deploy production with `--prod` only after separate approval.
+7. Verify https://klangfeld.netlify.app after production deploys.

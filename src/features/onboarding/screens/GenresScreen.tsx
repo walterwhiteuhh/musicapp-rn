@@ -15,7 +15,7 @@ export function GenresScreen() {
     <OnboardingScaffold
       eyebrow="Step 1 of 5"
       title="Pick two to four scene lanes."
-      description="These are not final genre boxes. They set the first lineage map for sets, versions, scenes, and later listening behavior."
+      description="These are scene lanes, not fixed genre boxes. They set the first lineage map for sets, versions, scenes, and behavior signals."
     >
       <View style={styles.grid}>
         {electronicGenres.map((genre) => (

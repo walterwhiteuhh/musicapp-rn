@@ -17,6 +17,7 @@ describe('LegalPage', () => {
     expect(screen.getAllByText('Dr. rer. nat. Timo Fischer').length).toBeGreaterThan(0);
     expect(screen.getByText('Karl-Strutz-Weg 38')).toBeTruthy();
     expect(screen.getByText('22119 Hamburg')).toBeTruthy();
+    expect(screen.getByText('Kontakt derzeit per E-Mail.')).toBeTruthy();
   });
 
   it('renders privacy details', () => {
@@ -27,5 +28,7 @@ describe('LegalPage', () => {
     expect(screen.getByText('Betroffenenrechte')).toBeTruthy();
     expect(screen.getByText('SoundCloud')).toBeTruthy();
     expect(screen.getByText('https://soundcloud.com/pages/privacy')).toBeTruthy();
+    expect(screen.getByText('YouTube')).toBeTruthy();
+    expect(screen.getByText('https://policies.google.com/privacy')).toBeTruthy();
   });
 });

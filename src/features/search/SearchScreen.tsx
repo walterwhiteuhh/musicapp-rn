@@ -52,7 +52,7 @@ export function SearchScreen({ searchTracksUseCase }: SearchScreenProps) {
         <Text style={styles.eyebrow}>Search</Text>
         <Text style={styles.title}>Find electronic tracks and artists.</Text>
         <Text style={styles.subtitle}>
-          Demo fixtures are active until the secure SoundCloud proxy is added.
+          Preview catalog is active while the secure SoundCloud proxy is prepared.
         </Text>
       </View>
 

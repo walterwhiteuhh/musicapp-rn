@@ -20,13 +20,13 @@ Implemented:
 
 - Mobile-ready Expo Router app with Discover, Search, Library, Profile, and Onboarding flows.
 - Landing page, imprint, and privacy pages for the public web surface.
-- Demo recommendation set with source-rich electronic music examples, including radio-show and live-set references.
+- Preview catalog with source-rich electronic music examples, including radio-show and live-set references.
 - Weighted style tags, technical feature layer, and profile-shaped recommendation filtering.
 - Local taste profile persistence via AsyncStorage.
 - Netlify Function boundary for AI profile-tag generation.
 - SQL planning draft for users, feature schemas, and encrypted API-key storage.
 
-Not final yet:
+Current limitations:
 
 - Production branding and visual identity.
 - Native Play Store release build.
