@@ -1,5 +1,5 @@
-import { Redirect } from 'expo-router';
+import { LandingScreen } from '@/features/landing/LandingScreen';
 
 export default function IndexRoute() {
-  return <Redirect href={'/(tabs)' as never} />;
+  return <LandingScreen />;
 }
