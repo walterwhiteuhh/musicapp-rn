@@ -77,7 +77,7 @@ export function ProfileScreen({
 
   return (
     <ScreenContainer>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Profile</Text>
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Taste profile</Text>

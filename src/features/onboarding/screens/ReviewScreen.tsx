@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
   dimensionRow: {
     alignItems: 'center',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 10,
   },
   dimensionLabel: {

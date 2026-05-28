@@ -13,7 +13,7 @@ export function GenresScreen() {
 
   return (
     <OnboardingScaffold
-      eyebrow="Step 1 of 4"
+      eyebrow="Step 1 of 5"
       title="Pick two to four scene lanes."
       description="These are not final genre boxes. They set the first lineage map for sets, versions, scenes, and later listening behavior."
     >

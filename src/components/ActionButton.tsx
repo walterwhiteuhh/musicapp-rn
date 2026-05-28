@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
     color: '#06110F',
     fontSize: 16,
     fontWeight: '700',
+    lineHeight: 21,
     textAlign: 'center',
   },
   ghostLabel: {

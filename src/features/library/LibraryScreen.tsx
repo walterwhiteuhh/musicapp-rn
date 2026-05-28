@@ -6,7 +6,7 @@ import { colors } from '@/theme/colors';
 export function LibraryScreen() {
   return (
     <ScreenContainer>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Library</Text>
         <InfoCard title="Saved tracks" body="Liked tracks will collect here once playback is added." />
         <InfoCard title="Playlists" body="Playlist creation is planned after the player slice." />

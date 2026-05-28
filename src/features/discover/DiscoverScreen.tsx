@@ -92,6 +92,7 @@ export function DiscoverScreen() {
         keyExtractor={(item) => item.id}
         numColumns={useGrid ? 2 : 1}
         renderItem={({ item }) => <RecommendationCard track={item} />}
+        showsVerticalScrollIndicator={false}
       />
     </ScreenContainer>
   );

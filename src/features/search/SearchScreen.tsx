@@ -98,7 +98,9 @@ export function SearchScreen({ searchTracksUseCase }: SearchScreenProps) {
           contentContainerStyle={styles.results}
           data={tracks}
           keyExtractor={(item) => item.id}
+          keyboardShouldPersistTaps="handled"
           renderItem={({ item }) => <TrackResult track={item} />}
+          showsVerticalScrollIndicator={false}
         />
       )}
     </ScreenContainer>
@@ -174,6 +176,7 @@ const styles = StyleSheet.create({
   searchBar: {
     alignItems: 'center',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 10,
   },
   input: {
@@ -185,6 +188,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     minHeight: 48,
+    minWidth: 190,
     paddingHorizontal: 14,
   },
   searchButton: {
