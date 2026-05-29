@@ -23,7 +23,7 @@ describe('DiscoverScreen', () => {
     jest.restoreAllMocks();
   });
 
-  it('renders demo recommendations without a completed profile', async () => {
+  it('renders preview recommendations without a completed profile', async () => {
     render(<DiscoverScreen />);
 
     expect(await screen.findByText('Grand Palais for Cercle')).toBeTruthy();

@@ -26,7 +26,7 @@ export function DimensionsScreen() {
     <OnboardingScaffold
       eyebrow="Step 2 of 5"
       title="Describe the tracks you tend to stay with."
-      description="These axes mirror how tracks can be tagged later. They are not final taste rules, just a starting signal."
+      description="These axes mirror how tracks can be tagged. They are a starting signal, not a permanent taste rule."
     >
       <View style={styles.list}>
         {dimensionKeys.map((dimension) => {
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
   },
   segmentRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
   },
   actions: {

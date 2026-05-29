@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { colors } from '@/theme/colors';
@@ -16,13 +16,22 @@ export function OnboardingScaffold({
   title,
   description,
 }: OnboardingScaffoldProps) {
+  const { height, width } = useWindowDimensions();
+  const compact = width < 380 || height < 720;
+
   return (
-    <ScreenContainer>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+    <ScreenContainer edges={['top', 'right', 'bottom', 'left']}>
+      <ScrollView
+        contentContainerStyle={[styles.scrollContent, compact && styles.scrollContentCompact]}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <Text style={styles.eyebrow}>{eyebrow}</Text>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.description}>{description}</Text>
+          <Text style={[styles.title, compact && styles.titleCompact]}>{title}</Text>
+          <Text style={[styles.description, compact && styles.descriptionCompact]}>
+            {description}
+          </Text>
         </View>
         {children}
       </ScrollView>
@@ -37,6 +46,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingBottom: 32,
     paddingTop: 24,
+  },
+  scrollContentCompact: {
+    gap: 18,
+    justifyContent: 'flex-start',
+    paddingBottom: 24,
+    paddingTop: 18,
   },
   header: {
     gap: 10,
@@ -54,9 +69,17 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     lineHeight: 40,
   },
+  titleCompact: {
+    fontSize: 29,
+    lineHeight: 34,
+  },
   description: {
     color: colors.muted,
     fontSize: 16,
     lineHeight: 23,
+  },
+  descriptionCompact: {
+    fontSize: 15,
+    lineHeight: 22,
   },
 });

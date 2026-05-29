@@ -25,6 +25,21 @@ type OpenAIResponse = {
   }[];
 };
 
+type AiProvider = 'netlify-openai' | 'openrouter';
+
+type AiClientConfig = {
+  apiKey: string;
+  baseURL?: string;
+  defaultHeaders?: Record<string, string>;
+  model: string;
+  provider: AiProvider;
+};
+
+const defaultModel = 'gpt-4o-mini';
+const defaultOpenRouterBaseUrl = 'https://openrouter.ai/api/v1';
+const defaultOpenRouterSiteUrl = 'https://klangfeld.netlify.app';
+const defaultOpenRouterAppTitle = 'Klangfeld';
+
 export default async function profileTags(req: Request, _context: Context): Promise<Response> {
   if (req.method !== 'POST') {
     return jsonResponse({ error: 'Method not allowed.' }, 405);
@@ -56,14 +71,15 @@ export const config: Config = {
 };
 
 async function generateProfileTags(profile: ProfileTagsRequest) {
-  const gatewayBaseUrl = typeof Netlify !== 'undefined' ? Netlify.env.get('OPENAI_BASE_URL') : undefined;
+  const aiConfig = resolveAiClientConfig();
   const openai = new OpenAI({
-    apiKey: 'netlify-ai-gateway',
-    baseURL: gatewayBaseUrl,
+    apiKey: aiConfig.apiKey,
+    baseURL: aiConfig.baseURL,
+    defaultHeaders: aiConfig.defaultHeaders,
   });
 
   const completion = (await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
+    model: aiConfig.model,
     response_format: { type: 'json_object' },
     messages: [
       {
@@ -85,6 +101,41 @@ async function generateProfileTags(profile: ProfileTagsRequest) {
   }
 
   return parseProfileTagSummary(JSON.parse(content));
+}
+
+function resolveAiClientConfig(): AiClientConfig {
+  const provider = getEnv('AI_PROVIDER') === 'openrouter' ? 'openrouter' : 'netlify-openai';
+  const model = getEnv('AI_MODEL') ?? defaultModel;
+
+  if (provider === 'openrouter') {
+    const apiKey = getEnv('OPENROUTER_API_KEY');
+
+    if (!apiKey) {
+      throw new Error('OPENROUTER_API_KEY is required when AI_PROVIDER=openrouter.');
+    }
+
+    return {
+      apiKey,
+      baseURL: getEnv('OPENROUTER_BASE_URL') ?? defaultOpenRouterBaseUrl,
+      defaultHeaders: {
+        'HTTP-Referer': getEnv('OPENROUTER_SITE_URL') ?? defaultOpenRouterSiteUrl,
+        'X-OpenRouter-Title': getEnv('OPENROUTER_APP_TITLE') ?? defaultOpenRouterAppTitle,
+      },
+      model,
+      provider,
+    };
+  }
+
+  return {
+    apiKey: 'netlify-ai-gateway',
+    baseURL: getEnv('OPENAI_BASE_URL'),
+    model,
+    provider,
+  };
+}
+
+function getEnv(name: string) {
+  return typeof Netlify !== 'undefined' ? Netlify.env.get(name) : undefined;
 }
 
 function jsonResponse(payload: unknown, status: number): Response {

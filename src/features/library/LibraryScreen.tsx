@@ -6,11 +6,11 @@ import { colors } from '@/theme/colors';
 export function LibraryScreen() {
   return (
     <ScreenContainer>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Library</Text>
-        <InfoCard title="Saved tracks" body="Liked tracks will collect here once playback is added." />
-        <InfoCard title="Playlists" body="Playlist creation is planned after the player slice." />
-        <InfoCard title="Recently played" body="Listening history will stay local until account sync exists." />
+        <InfoCard title="Library foundation" body="Saved tracks will appear here once playback and account sync are connected." />
+        <InfoCard title="Playlists" body="Playlist tools are on the release roadmap after the player foundation." />
+        <InfoCard title="Recently played" body="Listening history will stay local-first before account sync is introduced." />
       </ScrollView>
     </ScreenContainer>
   );

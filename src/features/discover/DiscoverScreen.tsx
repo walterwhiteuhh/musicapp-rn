@@ -58,8 +58,8 @@ export function DiscoverScreen() {
               <Text style={styles.title}>Your electronic discovery surface.</Text>
               <Text style={styles.subtitle}>
                 {profile?.completedAt
-                  ? 'Artist picks start strong now and fade as listening behavior becomes more useful.'
-                  : 'Demo mode is active: Klangfeld actions first, source links second.'}
+                  ? 'Artist picks start strong now and adapt as listening behavior becomes more useful.'
+                  : 'Preview catalog is active: source-first recommendations with transparent signal context.'}
               </Text>
               {!profile?.completedAt && (
                 <ActionButton onPress={() => router.push('/onboarding/welcome' as never)}>
@@ -92,6 +92,7 @@ export function DiscoverScreen() {
         keyExtractor={(item) => item.id}
         numColumns={useGrid ? 2 : 1}
         renderItem={({ item }) => <RecommendationCard track={item} />}
+        showsVerticalScrollIndicator={false}
       />
     </ScreenContainer>
   );
@@ -127,7 +128,7 @@ function FeaturedPreview({
             {track.artistName}
           </Text>
           <Text style={styles.previewUnavailable}>
-            Playback arrives later. Source context is already part of the profile.
+            Playback integration is on the roadmap. Source context is already part of the profile.
           </Text>
         </View>
       </View>
