@@ -128,7 +128,7 @@ function FeaturedPreview({
   return (
     <View style={[styles.featuredCard, { borderColor: activePlaying ? palette.primary : palette.border }]}>
       <Text style={[styles.previewLabel, { color: palette.primary }]}>Featured from your Klangprofil</Text>
-      
+
       <Pressable
         accessibilityRole="button"
         onPress={handlePlayPress}
@@ -155,35 +155,9 @@ function FeaturedPreview({
           <Text numberOfLines={1} style={[styles.featuredArtist, { color: palette.muted }]}>
             {track.artistName}
           </Text>
-<<<<<<< HEAD
-          {track.source === 'local' ? (
-            <View style={styles.localPlayStatus}>
-              {activePlaying ? (
-                <View style={styles.activePlayIndicator}>
-                  <Pause size={12} color={palette.primary} fill={palette.primary} />
-                  <Text style={[styles.playStatusTextActive, { color: palette.primary }]}>
-                    Wiedergabe läuft (Tippen zum Pausieren)
-                  </Text>
-                </View>
-              ) : (
-                <View style={styles.activePlayIndicator}>
-                  <Play size={12} color={palette.primary} fill={palette.primary} />
-                  <Text style={[styles.playStatusText, { color: palette.primary }]}>
-                    In-App abspielbar (Tippen zum Starten)
-                  </Text>
-                </View>
-              )}
-            </View>
-          ) : (
-            <Text style={styles.previewUnavailable}>
-              Playback arrives later. Source context is already part of the profile.
-            </Text>
-          )}
-=======
           <Text style={styles.previewUnavailable}>
             Playback integration is on the roadmap. Source context is already part of the profile.
           </Text>
->>>>>>> 603ce25e0f0facecbfda8a57b58dcf8c7e5934e3
         </View>
       </Pressable>
       <View style={styles.matchStrip}>
