@@ -47,6 +47,7 @@ export function LibraryScreen() {
 
   return (
     <ScreenContainer>
+<<<<<<< HEAD
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={[styles.title, { color: palette.text }]}>Bibliothek</Text>
 
@@ -217,6 +218,13 @@ export function LibraryScreen() {
             </View>
           )}
         </View>
+=======
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>Library</Text>
+        <InfoCard title="Library foundation" body="Saved tracks will appear here once playback and account sync are connected." />
+        <InfoCard title="Playlists" body="Playlist tools are on the release roadmap after the player foundation." />
+        <InfoCard title="Recently played" body="Listening history will stay local-first before account sync is introduced." />
+>>>>>>> 603ce25e0f0facecbfda8a57b58dcf8c7e5934e3
       </ScrollView>
     </ScreenContainer>
   );

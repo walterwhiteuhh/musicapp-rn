@@ -33,7 +33,7 @@ export function ReviewScreen() {
     <OnboardingScaffold
       eyebrow="Step 5 of 5"
       title="Your initial Klangprofil is ready."
-      description="This is the starting model. It begins at 100% weight, then behavior events gradually take over."
+      description="This is the profile foundation. It starts with full onboarding weight, then behavior events can gradually take over."
     >
       <View style={styles.summaryCard}>
         <SummaryRow label="Genres" value={draft.genres.join(', ')} />
@@ -87,7 +87,7 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.summaryRow}>
       <Text style={styles.summaryLabel}>{label}</Text>
-      <Text style={styles.summaryValue}>{value || 'Not selected'}</Text>
+      <Text style={styles.summaryValue}>{value || 'No selection yet'}</Text>
     </View>
   );
 }
@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
   dimensionRow: {
     alignItems: 'center',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 10,
   },
   dimensionLabel: {

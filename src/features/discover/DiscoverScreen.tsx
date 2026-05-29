@@ -61,8 +61,8 @@ export function DiscoverScreen() {
               <Text style={styles.title}>Your electronic discovery surface.</Text>
               <Text style={styles.subtitle}>
                 {profile?.completedAt
-                  ? 'Artist picks start strong now and fade as listening behavior becomes more useful.'
-                  : 'Demo mode is active: Klangfeld actions first, source links second.'}
+                  ? 'Artist picks start strong now and adapt as listening behavior becomes more useful.'
+                  : 'Preview catalog is active: source-first recommendations with transparent signal context.'}
               </Text>
               {!profile?.completedAt && (
                 <ActionButton onPress={() => router.push('/onboarding/welcome' as never)}>
@@ -95,6 +95,7 @@ export function DiscoverScreen() {
         keyExtractor={(item) => item.id}
         numColumns={useGrid ? 2 : 1}
         renderItem={({ item }) => <RecommendationCard track={item} />}
+        showsVerticalScrollIndicator={false}
       />
     </ScreenContainer>
   );
@@ -154,6 +155,7 @@ function FeaturedPreview({
           <Text numberOfLines={1} style={[styles.featuredArtist, { color: palette.muted }]}>
             {track.artistName}
           </Text>
+<<<<<<< HEAD
           {track.source === 'local' ? (
             <View style={styles.localPlayStatus}>
               {activePlaying ? (
@@ -177,6 +179,11 @@ function FeaturedPreview({
               Playback arrives later. Source context is already part of the profile.
             </Text>
           )}
+=======
+          <Text style={styles.previewUnavailable}>
+            Playback integration is on the roadmap. Source context is already part of the profile.
+          </Text>
+>>>>>>> 603ce25e0f0facecbfda8a57b58dcf8c7e5934e3
         </View>
       </Pressable>
       <View style={styles.matchStrip}>

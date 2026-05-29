@@ -92,7 +92,7 @@ describe('ProfileScreen', () => {
     render(<ProfileScreen profileTagsProvider={provider} aiProfileTagsEnabled={false} />);
 
     expect(await screen.findByText('Techno, Ambient')).toBeTruthy();
-    expect(screen.getByText('AI profile tags are disabled for this build. Local profile data is still available.')).toBeTruthy();
+    expect(screen.getByText('AI profile tags are off for this preview. Local profile data remains available.')).toBeTruthy();
     expect(provider.generateTags).not.toHaveBeenCalled();
   });
 });

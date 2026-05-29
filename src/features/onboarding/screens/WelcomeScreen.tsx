@@ -12,13 +12,13 @@ export function WelcomeScreen() {
     <OnboardingScaffold
       eyebrow="Klangfeld"
       title="Build a signal profile, not a playlist questionnaire."
-      description="Klangfeld starts with a compact map of genres, listening context, and track dimensions. Later, real listening behavior slowly takes over from this onboarding signal."
+      description="Klangfeld starts with a compact map of genres, listening context, and track dimensions. Behavior signals can take over gradually as listening history grows."
     >
       <View style={styles.card}>
         <Text style={styles.cardTitle}>What the profile captures</Text>
         <Text style={styles.cardText}>Electronic genres as a narrow starting field</Text>
         <Text style={styles.cardText}>Energy, density, texture, space, and rhythm</Text>
-        <Text style={styles.cardText}>Listening contexts that can become statistics later</Text>
+        <Text style={styles.cardText}>Listening contexts that can become signal statistics</Text>
       </View>
 
       <View style={styles.actions}>
@@ -26,7 +26,7 @@ export function WelcomeScreen() {
           Build Klangprofil
         </ActionButton>
         <ActionButton variant="ghost" onPress={() => router.replace('/(tabs)' as never)}>
-          Skip and use demo mode
+          Skip and use preview catalog
         </ActionButton>
       </View>
     </OnboardingScaffold>

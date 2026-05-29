@@ -1,14 +1,19 @@
 /* eslint-disable import/first */
 const mockCreate = jest.fn();
+const mockOpenAI = jest.fn();
 
 jest.mock('openai', () =>
-  jest.fn().mockImplementation(() => ({
-    chat: {
-      completions: {
-        create: mockCreate,
+  jest.fn().mockImplementation((options) => {
+    mockOpenAI(options);
+
+    return {
+      chat: {
+        completions: {
+          create: mockCreate,
+        },
       },
-    },
-  })),
+    };
+  }),
 );
 
 import profileTags from '../../netlify/functions/profile-tags';
@@ -52,12 +57,22 @@ function request(method: string, body?: unknown) {
   });
 }
 
+function setNetlifyEnv(vars: Record<string, string | undefined>) {
+  (globalThis as { Netlify?: { env: { get(name: string): string | undefined } } }).Netlify = {
+    env: {
+      get: (name: string) => vars[name],
+    },
+  };
+}
+
 describe('profile-tags function', () => {
   beforeEach(() => {
     mockCreate.mockReset();
+    mockOpenAI.mockClear();
+    delete (globalThis as { Netlify?: unknown }).Netlify;
   });
 
-  it('generates profile tags for a valid POST request', async () => {
+  it('uses the Netlify OpenAI gateway by default for a valid POST request', async () => {
     mockCreate.mockResolvedValue({
       choices: [
         {
@@ -88,6 +103,58 @@ describe('profile-tags function', () => {
         response_format: { type: 'json_object' },
       }),
     );
+    expect(mockOpenAI).toHaveBeenCalledWith(
+      expect.objectContaining({
+        apiKey: 'netlify-ai-gateway',
+      }),
+    );
+  });
+
+  it('can use OpenRouter with OpenAI-compatible chat completions', async () => {
+    setNetlifyEnv({
+      AI_PROVIDER: 'openrouter',
+      AI_MODEL: 'openrouter/auto',
+      OPENROUTER_API_KEY: 'or-test-key',
+      OPENROUTER_SITE_URL: 'https://klangfeld.netlify.app',
+      OPENROUTER_APP_TITLE: 'Klangfeld',
+    });
+    mockCreate.mockResolvedValue({
+      choices: [
+        {
+          message: {
+            content: JSON.stringify({
+              schemaVersion: 1,
+              primaryEnergy: 'medium',
+              rhythmBias: 'Broken rhythm',
+              listeningIntent: 'Source-first discovery',
+              discoveryVector: ['openrouter'],
+              profileNotes: ['Provider-neutral response'],
+              confidence: 0.7,
+            }),
+          },
+        },
+      ],
+    });
+
+    const response = await profileTags(request('POST', validProfileRequest), {} as never);
+
+    expect(response.status).toBe(200);
+    expect(mockOpenAI).toHaveBeenCalledWith(
+      expect.objectContaining({
+        apiKey: 'or-test-key',
+        baseURL: 'https://openrouter.ai/api/v1',
+        defaultHeaders: {
+          'HTTP-Referer': 'https://klangfeld.netlify.app',
+          'X-OpenRouter-Title': 'Klangfeld',
+        },
+      }),
+    );
+    expect(mockCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        model: 'openrouter/auto',
+        response_format: { type: 'json_object' },
+      }),
+    );
   });
 
   it('rejects non-POST requests', async () => {
@@ -108,5 +175,16 @@ describe('profile-tags function', () => {
     const response = await profileTags(request('POST', validProfileRequest), {} as never);
 
     expect(response.status).toBe(502);
+  });
+
+  it('returns 502 when OpenRouter is selected without an API key', async () => {
+    setNetlifyEnv({
+      AI_PROVIDER: 'openrouter',
+    });
+
+    const response = await profileTags(request('POST', validProfileRequest), {} as never);
+
+    expect(response.status).toBe(502);
+    expect(mockCreate).not.toHaveBeenCalled();
   });
 });
