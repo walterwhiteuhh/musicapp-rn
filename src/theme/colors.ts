@@ -23,20 +23,20 @@ export const palettes: Record<DesignPaletteId, DesignPalette> = {
   klangfeld: {
     id: 'klangfeld',
     name: 'Klangfeld',
-    description: 'Offizielle Klangfeld-Brand-Palette mit edlem Purple-zu-Cyan-Verlauf und Deep Navy Hintergrund.',
-    background: '#07070F',
-    surface: '#0E0F1A',
-    elevated: '#161828',
-    border: '#252840',
-    text: '#F0F0FA',
-    muted: '#8A8DA8',
-    primary: '#A855F7',     // Deep Purple
-    secondary: '#06B6D4',   // Electric Cyan
-    accent: '#8B5CF6',      // Restrained Violet
+    description: 'Offizielle Klangfeld-Brand-Palette mit dem neuen Signatur-Verlauf #00D4FF (Cyan) -> #7B2CFF (Violett) -> #FF3FD8 (Magenta).',
+    background: '#04040A',
+    surface: '#0B0B14',
+    elevated: '#121221',
+    border: '#1E1F35',
+    text: '#F0F5FA',
+    muted: '#7E83A9',
+    primary: '#7B2CFF',     // Neon Violet
+    secondary: '#00D4FF',   // Neon Cyan
+    accent: '#FF3FD8',      // Neon Magenta
     warning: '#FBBF24',
     danger: '#FB7185',
-    gradientStart: '#8B5CF6', // Purple
-    gradientEnd: '#06B6D4',   // Cyan
+    gradientStart: '#00D4FF', // Cyan
+    gradientEnd: '#FF3FD8',   // Magenta
   },
   duskSignal: {
     id: 'duskSignal',
