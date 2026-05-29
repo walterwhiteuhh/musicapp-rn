@@ -1,4 +1,4 @@
-export type DesignPaletteId = 'afterhours' | 'duskSignal';
+export type DesignPaletteId = 'klangfeld' | 'duskSignal';
 
 export type DesignPalette = {
   id: DesignPaletteId;
@@ -15,24 +15,28 @@ export type DesignPalette = {
   accent: string;
   warning: string;
   danger: string;
+  gradientStart: string;
+  gradientEnd: string;
 };
 
 export const palettes: Record<DesignPaletteId, DesignPalette> = {
-  afterhours: {
-    id: 'afterhours',
-    name: 'Afterhours Circuit',
-    description: 'Deep club blacks, cyan signal lights, and restrained violet detail.',
-    background: '#080B10',
-    surface: '#111821',
-    elevated: '#182433',
-    border: '#2A394B',
-    text: '#F4F8FB',
-    muted: '#9AA8B8',
-    primary: '#2DD4BF',
-    secondary: '#8B5CF6',
-    accent: '#38BDF8',
+  klangfeld: {
+    id: 'klangfeld',
+    name: 'Klangfeld',
+    description: 'Offizielle Klangfeld-Brand-Palette mit edlem Purple-zu-Cyan-Verlauf und Deep Navy Hintergrund.',
+    background: '#07070F',
+    surface: '#0E0F1A',
+    elevated: '#161828',
+    border: '#252840',
+    text: '#F0F0FA',
+    muted: '#8A8DA8',
+    primary: '#A855F7',     // Deep Purple
+    secondary: '#06B6D4',   // Electric Cyan
+    accent: '#8B5CF6',      // Restrained Violet
     warning: '#FBBF24',
     danger: '#FB7185',
+    gradientStart: '#8B5CF6', // Purple
+    gradientEnd: '#06B6D4',   // Cyan
   },
   duskSignal: {
     id: 'duskSignal',
@@ -49,7 +53,9 @@ export const palettes: Record<DesignPaletteId, DesignPalette> = {
     accent: '#F59E0B',
     warning: '#FBBF24',
     danger: '#FB7185',
+    gradientStart: '#D946EF',
+    gradientEnd: '#22D3EE',
   },
 };
 
-export const colors = palettes.afterhours;
+export const colors = palettes.klangfeld;

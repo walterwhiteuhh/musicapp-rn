@@ -1,4 +1,4 @@
-export type MusicSource = 'soundcloud' | 'youtube';
+export type MusicSource = 'soundcloud' | 'youtube' | 'local';
 
 export type Track = {
   id: string;

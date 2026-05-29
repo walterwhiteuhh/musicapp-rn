@@ -19,7 +19,9 @@
     "android": {
       "package": "com.klangfeld.app",
       "versionCode": 1,
-      "permissions": [],
+      "permissions": [
+        "INTERNET"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0B0F14"

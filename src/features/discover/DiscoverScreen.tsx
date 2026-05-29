@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Play, Pause } from 'lucide-react-native';
 
 import { ActionButton } from '@/components/ActionButton';
 import { ScreenContainer } from '@/components/ScreenContainer';
@@ -18,6 +19,8 @@ import { electronicRecommendationFixtures } from '@/data/recommendations/fixture
 import { filterRecommendations } from '@/domain/recommendations/filterRecommendations';
 import type { RecommendationTrack } from '@/domain/recommendations/RecommendationTrack';
 import type { TasteProfile } from '@/domain/taste/TasteProfile';
+import { useAudioPlayer } from '@/features/player/PlayerContext';
+import { useThemePalette } from '@/theme/ThemeContext';
 import { colors } from '@/theme/colors';
 
 const repository = new AsyncStorageTasteProfileRepository();
@@ -106,31 +109,76 @@ function FeaturedPreview({
   track: RecommendationTrack;
   onMoreLikeThis: () => void;
 }) {
+  const { currentTrack, isPlaying, playTrack, pauseTrack } = useAudioPlayer();
+  const { palette } = useThemePalette();
+
+  const isCurrent = currentTrack?.id === track.id;
+  const activePlaying = isCurrent && isPlaying;
+
+  const handlePlayPress = () => {
+    if (track.source !== 'local') return;
+    if (activePlaying) {
+      pauseTrack();
+    } else {
+      playTrack(track);
+    }
+  };
+
   return (
-    <View style={styles.featuredCard}>
-      <Text style={styles.previewLabel}>Featured from your Klangprofil</Text>
-      <View style={styles.playerSurface}>
+    <View style={[styles.featuredCard, { borderColor: activePlaying ? palette.primary : palette.border }]}>
+      <Text style={[styles.previewLabel, { color: palette.primary }]}>Featured from your Klangprofil</Text>
+      
+      <Pressable
+        accessibilityRole="button"
+        onPress={handlePlayPress}
+        disabled={track.source !== 'local'}
+        style={[
+          styles.playerSurface,
+          track.source === 'local' && { cursor: 'pointer' },
+          activePlaying && { borderColor: palette.primary }
+        ]}
+      >
         <View style={styles.previewSignal}>
-          <View style={[styles.previewBar, { height: 24 }]} />
-          <View style={[styles.previewBar, { height: 54 }]} />
-          <View style={[styles.previewBar, { height: 34 }]} />
-          <View style={[styles.previewBar, { height: 70 }]} />
-          <View style={[styles.previewBar, { height: 42 }]} />
-          <View style={[styles.previewBar, { height: 28 }]} />
-          <View style={[styles.previewBar, { height: 58 }]} />
+          <View style={[styles.previewBar, { height: 24, backgroundColor: activePlaying ? palette.primary : palette.muted }]} />
+          <View style={[styles.previewBar, { height: 54, backgroundColor: activePlaying ? palette.primary : palette.muted }]} />
+          <View style={[styles.previewBar, { height: 34, backgroundColor: activePlaying ? palette.primary : palette.muted }]} />
+          <View style={[styles.previewBar, { height: 70, backgroundColor: activePlaying ? palette.primary : palette.muted }]} />
+          <View style={[styles.previewBar, { height: 42, backgroundColor: activePlaying ? palette.primary : palette.muted }]} />
+          <View style={[styles.previewBar, { height: 28, backgroundColor: activePlaying ? palette.primary : palette.muted }]} />
+          <View style={[styles.previewBar, { height: 58, backgroundColor: activePlaying ? palette.primary : palette.muted }]} />
         </View>
         <View style={styles.playerCopy}>
-          <Text numberOfLines={1} style={styles.featuredTitle}>
+          <Text numberOfLines={1} style={[styles.featuredTitle, { color: palette.text }]}>
             {track.title}
           </Text>
-          <Text numberOfLines={1} style={styles.featuredArtist}>
+          <Text numberOfLines={1} style={[styles.featuredArtist, { color: palette.muted }]}>
             {track.artistName}
           </Text>
-          <Text style={styles.previewUnavailable}>
-            Playback arrives later. Source context is already part of the profile.
-          </Text>
+          {track.source === 'local' ? (
+            <View style={styles.localPlayStatus}>
+              {activePlaying ? (
+                <View style={styles.activePlayIndicator}>
+                  <Pause size={12} color={palette.primary} fill={palette.primary} />
+                  <Text style={[styles.playStatusTextActive, { color: palette.primary }]}>
+                    Wiedergabe läuft (Tippen zum Pausieren)
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.activePlayIndicator}>
+                  <Play size={12} color={palette.primary} fill={palette.primary} />
+                  <Text style={[styles.playStatusText, { color: palette.primary }]}>
+                    In-App abspielbar (Tippen zum Starten)
+                  </Text>
+                </View>
+              )}
+            </View>
+          ) : (
+            <Text style={styles.previewUnavailable}>
+              Playback arrives later. Source context is already part of the profile.
+            </Text>
+          )}
         </View>
-      </View>
+      </Pressable>
       <View style={styles.matchStrip}>
         <Text style={styles.matchText}>{formatWeightedTags(track.styleTags, track.genre)}</Text>
         <Text style={styles.matchDivider}>/</Text>
@@ -164,22 +212,54 @@ function FeaturedPreview({
 }
 
 function RecommendationCard({ track }: { track: RecommendationTrack }) {
+  const { currentTrack, isPlaying, playTrack, pauseTrack } = useAudioPlayer();
+  const { palette } = useThemePalette();
+
+  const isCurrent = currentTrack?.id === track.id;
+  const activePlaying = isCurrent && isPlaying;
+
+  const handlePlayPress = () => {
+    if (track.source !== 'local') return;
+    if (activePlaying) {
+      pauseTrack();
+    } else {
+      playTrack(track);
+    }
+  };
+
   return (
-    <View style={styles.card}>
-      <View style={styles.artwork}>
-        <Text style={styles.artworkKicker}>{track.genre}</Text>
+    <View style={[styles.card, activePlaying && { borderColor: palette.primary }]}>
+      <Pressable
+        disabled={track.source !== 'local'}
+        onPress={handlePlayPress}
+        style={[styles.artwork, track.source === 'local' && { cursor: 'pointer' }]}
+      >
+        <View style={styles.cardArtworkHeader}>
+          <Text style={[styles.artworkKicker, track.source === 'local' && { color: palette.primary }]}>
+            {track.source === 'local' ? '✓ LOKAL ABSPIELBAR' : track.genre}
+          </Text>
+          {track.source === 'local' && (
+            <View style={[styles.cardPlayIconContainer, { backgroundColor: palette.primary }]}>
+              {activePlaying ? (
+                <Pause size={12} color="#06110F" fill="#06110F" />
+              ) : (
+                <Play size={12} color="#06110F" fill="#06110F" />
+              )}
+            </View>
+          )}
+        </View>
         <View style={styles.signalField}>
-          <View style={[styles.signalBar, { height: 22 }]} />
-          <View style={[styles.signalBar, { height: 42 }]} />
-          <View style={[styles.signalBar, { height: 30 }]} />
-          <View style={[styles.signalBar, { height: 54 }]} />
-          <View style={[styles.signalBar, { height: 36 }]} />
-          <View style={[styles.signalBar, { height: 24 }]} />
+          <View style={[styles.signalBar, { height: 22, backgroundColor: activePlaying ? palette.primary : palette.muted + '80' }]} />
+          <View style={[styles.signalBar, { height: 42, backgroundColor: activePlaying ? palette.primary : palette.muted + '80' }]} />
+          <View style={[styles.signalBar, { height: 30, backgroundColor: activePlaying ? palette.primary : palette.muted + '80' }]} />
+          <View style={[styles.signalBar, { height: 54, backgroundColor: activePlaying ? palette.primary : palette.muted + '80' }]} />
+          <View style={[styles.signalBar, { height: 36, backgroundColor: activePlaying ? palette.primary : palette.muted + '80' }]} />
+          <View style={[styles.signalBar, { height: 24, backgroundColor: activePlaying ? palette.primary : palette.muted + '80' }]} />
         </View>
         <Text numberOfLines={1} style={styles.artworkCaption}>
-          {formatSourceKind(track.sourceLinks?.[0]?.kind)} / {track.contexts.join(' / ')}
+          {track.source === 'local' ? 'In-App Player / Taste Profile coupled' : `${formatSourceKind(track.sourceLinks?.[0]?.kind)} / ${track.contexts.join(' / ')}`}
         </Text>
-      </View>
+      </Pressable>
       <View style={styles.cardBody}>
         <View style={styles.cardHeader}>
           <View style={styles.trackText}>
@@ -227,6 +307,20 @@ function RecommendationCard({ track }: { track: RecommendationTrack }) {
 }
 
 function SourceLink({ track, compact = false }: { track: RecommendationTrack; compact?: boolean }) {
+  const { currentTrack, isPlaying, playTrack, pauseTrack } = useAudioPlayer();
+  const { palette } = useThemePalette();
+
+  const isCurrent = currentTrack?.id === track.id;
+  const activePlaying = isCurrent && isPlaying;
+
+  const handlePlayPress = () => {
+    if (activePlaying) {
+      pauseTrack();
+    } else {
+      playTrack(track);
+    }
+  };
+
   const primarySource = track.sourceLinks?.[0] ?? null;
   const linkUrl = primarySource?.url ?? track.externalUrl;
 
@@ -237,6 +331,31 @@ function SourceLink({ track, compact = false }: { track: RecommendationTrack; co
 
     await Linking.openURL(linkUrl).catch(() => undefined);
   };
+
+  if (track.source === 'local') {
+    return (
+      <Pressable
+        accessibilityRole="button"
+        style={[
+          styles.sourceLink,
+          compact && styles.sourceLinkCompact,
+          {
+            borderColor: palette.primary,
+            backgroundColor: activePlaying ? palette.surface : '#071018',
+          }
+        ]}
+        onPress={handlePlayPress}
+      >
+        <Text style={[styles.sourceLabel, { color: palette.primary }]}>✓ Klangfeld Player</Text>
+        <Text style={styles.sourceText}>
+          {activePlaying ? 'Pause abspielen' : 'Jetzt in-App abspielen'}
+        </Text>
+        <Text style={styles.sourceContext}>
+          Geschmacksprofil wird kalibriert
+        </Text>
+      </Pressable>
+    );
+  }
 
   if (!linkUrl) {
     return null;
@@ -735,4 +854,37 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 17,
   },
+  localPlayStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
+  activePlayIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  playStatusText: {
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  playStatusTextActive: {
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  cardArtworkHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  cardPlayIconContainer: {
+    borderRadius: 999,
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
+
